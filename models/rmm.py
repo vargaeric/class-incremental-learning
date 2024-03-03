@@ -10,6 +10,7 @@ from utils.toolkit import count_parameters, tensor2numpy, accuracy
 from utils.inc_net import IncrementalNet
 from scipy.spatial.distance import cdist
 from models.base import BaseLearner
+from models.icarl import iCaRL
 from tqdm import tqdm
 import torch.optim as optim
 
@@ -23,32 +24,53 @@ num_workers = 8
 class RMMBase(BaseLearner):
     def __init__(self, args):
         self._args = args
-        self._m_rate_list = args["m_rate_list"]
-        self._c_rate_list = args["c_rate_list"]
+        self._m_rate_list = args.get("m_rate_list", [])
+        self._c_rate_list = args.get("c_rate_list", [])
 
     @property
     def samples_per_class(self):
+        return int(self.memory_size // self._total_classes)
+
+    @property
+    def memory_size(self):
         if self._args["dataset"] == "cifar100":
-            img_pre_cls = 500
+            img_per_cls = 500
         else:
-            img_pre_cls = 1300
+            img_per_cls = 1300
 
         if self._m_rate_list[self._cur_task] != 0:
-            self._memory_size = self._args["memory_size"] + int(
+            print(self._total_classes)
+            self._memory_size = min(int(self._total_classes*img_per_cls-1),self._args["memory_size"] + int(
                 self._m_rate_list[self._cur_task]
                 * self._args["increment"]
-                * img_pre_cls
-            )
-        return self._memory_size // self._total_classes
+                * img_per_cls
+            ))
+        return self._memory_size
+
+    @property
+    def new_memory_size(self):
+        if self._args["dataset"] == "cifar100":
+            img_per_cls = 500
+        else:
+            img_per_cls = 1300
+        return int(
+            (1 - self._m_rate_list[self._cur_task])
+            * self._args["increment"]
+            * img_per_cls
+        )
 
     def build_rehearsal_memory(self, data_manager, per_class):
         self._reduce_exemplar(data_manager, per_class)
         self._construct_exemplar(data_manager, per_class)
 
     def _construct_exemplar(self, data_manager, m):
+        if self._args["dataset"] == "cifar100":
+            img_per_cls = 500
+        else:
+            img_per_cls = 1300
         ns = [
-            int(m * (1 - self._c_rate_list[self._cur_task])),
-            int(m * (1 + self._c_rate_list[self._cur_task])),
+            min(img_per_cls,int(m * (1 - self._c_rate_list[self._cur_task]))),
+            min(img_per_cls,int(m * (1 + self._c_rate_list[self._cur_task]))),
         ]
         logging.info(
             "Constructing exemplars...({} or {} per classes)".format(ns[0], ns[1])
@@ -154,6 +176,51 @@ class RMMBase(BaseLearner):
             mean = mean / np.linalg.norm(mean)
 
             self._class_means[class_idx, :] = mean
+
+
+class RMM_iCaRL(
+    RMMBase, iCaRL
+):  # RMM Base is supposed to be prior to the orginal method.
+    def __init__(self, args):
+        RMMBase.__init__(self, args)
+        iCaRL.__init__(self, args)
+
+    def incremental_train(self, data_manager):
+        self._cur_task += 1
+        self._total_classes = self._known_classes + data_manager.get_task_size(
+            self._cur_task
+        )
+        self._network.update_fc(self._total_classes)
+        logging.info(
+            "Learning on {}-{}".format(self._known_classes, self._total_classes)
+        )
+
+        train_dataset = data_manager.get_dataset(
+            np.arange(self._known_classes, self._total_classes),
+            source="train",
+            mode="train",
+            appendent=self._get_memory(),
+            m_rate=self._m_rate_list[self._cur_task] if self._cur_task > 0 else None,
+        )
+        self.train_loader = DataLoader(
+            train_dataset,
+            batch_size=batch_size,
+            shuffle=True,
+            num_workers=num_workers,
+            pin_memory=True,
+        )
+        test_dataset = data_manager.get_dataset(
+            np.arange(0, self._total_classes), source="test", mode="test"
+        )
+        self.test_loader = DataLoader(
+            test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers
+        )
+        if len(self._multiple_gpus) > 1:
+            self._network = nn.DataParallel(self._network, self._multiple_gpus)
+        self._train(self.train_loader, self.test_loader)
+        self.build_rehearsal_memory(data_manager, self.samples_per_class)
+        if len(self._multiple_gpus) > 1:
+            self._network = self._network.module
 
 
 class RMM_FOSTER(RMMBase, FOSTER):

@@ -6,8 +6,8 @@ from trainer import train
 def main():
     args = setup_parser().parse_args()
     param = load_json(args.config)
-    args = vars(args) 
-    args.update(param) 
+    args = vars(args)  # Converting argparse Namespace to a dict.
+    args.update(param)  # Add parameters from json
 
     train(args)
 
@@ -21,7 +21,7 @@ def load_json(settings_path):
 
 def setup_parser():
     parser = argparse.ArgumentParser(description='Reproduce of multiple continual learning algorthms.')
-    parser.add_argument('--config', type=str, default='./config.json',
+    parser.add_argument('--config', type=str, default='./exps/finetune.json',
                         help='Json file of settings.')
 
     return parser

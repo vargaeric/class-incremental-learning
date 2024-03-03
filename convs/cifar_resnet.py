@@ -1,3 +1,7 @@
+'''
+Reference:
+https://github.com/khurramjaved96/incremental-learning/blob/autoencoders/model/resnet32.py
+'''
 import math
 
 import torch
@@ -83,8 +87,15 @@ class ResNetBasicblock(nn.Module):
 
 
 class CifarResNet(nn.Module):
+    """
+    ResNet optimized for the Cifar Dataset, as specified in
+    https://arxiv.org/abs/1512.03385.pdf
+    """
+
     def __init__(self, block, depth, channels=3):
         super(CifarResNet, self).__init__()
+
+        # Model type specifies number of layers for CIFAR-10 and CIFAR-100 model
         assert (depth - 2) % 6 == 0, 'depth should be one of 20, 32, 44, 56, 110'
         layer_blocks = (depth - 2) // 6
 
@@ -103,7 +114,7 @@ class CifarResNet(nn.Module):
             if isinstance(m, nn.Conv2d):
                 n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
                 m.weight.data.normal_(0, math.sqrt(2. / n))
-                
+                # m.bias.data.zero_()
             elif isinstance(m, nn.BatchNorm2d):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
@@ -125,15 +136,15 @@ class CifarResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        x = self.conv_1_3x3(x)  
+        x = self.conv_1_3x3(x)  # [bs, 16, 32, 32]
         x = F.relu(self.bn_1(x), inplace=True)
 
-        x_1 = self.stage_1(x)  
-        x_2 = self.stage_2(x_1)  
-        x_3 = self.stage_3(x_2) 
+        x_1 = self.stage_1(x)  # [bs, 16, 32, 32]
+        x_2 = self.stage_2(x_1)  # [bs, 32, 16, 16]
+        x_3 = self.stage_3(x_2)  # [bs, 64, 8, 8]
 
-        pooled = self.avgpool(x_3)  
-        features = pooled.view(pooled.size(0), -1)  
+        pooled = self.avgpool(x_3)  # [bs, 64, 1, 1]
+        features = pooled.view(pooled.size(0), -1)  # [bs, 64]
 
         return {
             'fmaps': [x_1, x_2, x_3],
@@ -184,4 +195,13 @@ def resnet56():
 def resnet110():
     """Constructs a ResNet-110 model for CIFAR-10."""
     model = CifarResNet(ResNetBasicblock, 110)
+    return model
+
+# for auc
+def resnet14():
+    model = CifarResNet(ResNetBasicblock, 14)
+    return model
+
+def resnet26():
+    model = CifarResNet(ResNetBasicblock, 26)
     return model
