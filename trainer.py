@@ -61,63 +61,81 @@ def _train(args):
     cnn_matrix, nme_matrix = [], []
 
     for task in range(data_manager.nb_tasks):
-        logging.info("All params: {}".format(count_parameters(model._network)))
-        logging.info(
-            "Trainable params: {}".format(count_parameters(model._network, True))
-        )
+        # logging.info("All params: {}".format(count_parameters(model._network)))
+        # logging.info(
+        #     "Trainable params: {}".format(count_parameters(model._network, True))
+        # )
         model.incremental_train(data_manager)
         cnn_accy, nme_accy = model.eval_task()
         model.after_task()
 
-        if nme_accy is not None:
-            logging.info("CNN: {}".format(cnn_accy["grouped"]))
-            logging.info("NME: {}".format(nme_accy["grouped"]))
+        # if nme_accy is not None:
+        #     logging.info("CNN: {}".format(cnn_accy["grouped"]))
+        #     logging.info("NME: {}".format(nme_accy["grouped"]))
+        #
+        #     cnn_keys = [key for key in cnn_accy["grouped"].keys() if '-' in key]
+        #     cnn_keys_sorted = sorted(cnn_keys)
+        #     cnn_values = [cnn_accy["grouped"][key] for key in cnn_keys_sorted]
+        #     cnn_matrix.append(cnn_values)
+        #
+        #     nme_keys = [key for key in nme_accy["grouped"].keys() if '-' in key]
+        #     nme_keys_sorted = sorted(nme_keys)
+        #     nme_values = [nme_accy["grouped"][key] for key in nme_keys_sorted]
+        #     nme_matrix.append(nme_values)
+        #
+        #
+        #     cnn_curve["top1"].append(cnn_accy["top1"])
+        #     cnn_curve["top5"].append(cnn_accy["top5"])
+        #
+        #     nme_curve["top1"].append(nme_accy["top1"])
+        #     nme_curve["top5"].append(nme_accy["top5"])
+        #
+        #     logging.info("CNN top1 curve: {}".format(cnn_curve["top1"]))
+        #     logging.info("CNN top5 curve: {}".format(cnn_curve["top5"]))
+        #     logging.info("NME top1 curve: {}".format(nme_curve["top1"]))
+        #     logging.info("NME top5 curve: {}\n".format(nme_curve["top5"]))
+        #
+        #     print('Average Accuracy (CNN):', sum(cnn_curve["top1"])/len(cnn_curve["top1"]))
+        #     print('Average Accuracy (NME):', sum(nme_curve["top1"])/len(nme_curve["top1"]))
+        #
+        #     logging.info("Average Accuracy (CNN): {}".format(sum(cnn_curve["top1"])/len(cnn_curve["top1"])))
+        #     logging.info("Average Accuracy (NME): {}".format(sum(nme_curve["top1"])/len(nme_curve["top1"])))
+        # else:
+        #     logging.info("No NME accuracy.")
+        #     logging.info("CNN: {}".format(cnn_accy["grouped"]))
+        #
+        #     cnn_keys = [key for key in cnn_accy["grouped"].keys() if '-' in key]
+        #     cnn_keys_sorted = sorted(cnn_keys)
+        #     cnn_values = [cnn_accy["grouped"][key] for key in cnn_keys_sorted]
+        #     cnn_matrix.append(cnn_values)
+        #
+        #     cnn_curve["top1"].append(cnn_accy["top1"])
+        #     cnn_curve["top5"].append(cnn_accy["top5"])
+        #
+        #     logging.info("CNN top1 curve: {}".format(cnn_curve["top1"]))
+        #     logging.info("CNN top5 curve: {}\n".format(cnn_curve["top5"]))
+        #
+        #     print('Average Accuracy (CNN):', sum(cnn_curve["top1"])/len(cnn_curve["top1"]))
+        #     logging.info("Average Accuracy (CNN): {}".format(sum(cnn_curve["top1"])/len(cnn_curve["top1"])))
 
-            cnn_keys = [key for key in cnn_accy["grouped"].keys() if '-' in key]
-            cnn_keys_sorted = sorted(cnn_keys)
-            cnn_values = [cnn_accy["grouped"][key] for key in cnn_keys_sorted]
-            cnn_matrix.append(cnn_values)
+        cnn_keys = [key for key in cnn_accy["grouped"].keys() if '-' in key]
+        cnn_keys_sorted = sorted(cnn_keys)
+        cnn_values = [cnn_accy["grouped"][key] for key in cnn_keys_sorted]
+        cnn_matrix.append(cnn_values)
 
-            nme_keys = [key for key in nme_accy["grouped"].keys() if '-' in key]
-            nme_keys_sorted = sorted(nme_keys)
-            nme_values = [nme_accy["grouped"][key] for key in nme_keys_sorted]
-            nme_matrix.append(nme_values)
+        nme_keys = [key for key in nme_accy["grouped"].keys() if '-' in key]
+        nme_keys_sorted = sorted(nme_keys)
+        nme_values = [nme_accy["grouped"][key] for key in nme_keys_sorted]
+        nme_matrix.append(nme_values)
 
+        cnn_curve["top1"].append(cnn_accy["top1"])
+        cnn_curve["top5"].append(cnn_accy["top5"])
 
-            cnn_curve["top1"].append(cnn_accy["top1"])
-            cnn_curve["top5"].append(cnn_accy["top5"])
+        nme_curve["top1"].append(nme_accy["top1"])
+        nme_curve["top5"].append(nme_accy["top5"])
 
-            nme_curve["top1"].append(nme_accy["top1"])
-            nme_curve["top5"].append(nme_accy["top5"])
-
-            logging.info("CNN top1 curve: {}".format(cnn_curve["top1"]))
-            logging.info("CNN top5 curve: {}".format(cnn_curve["top5"]))
-            logging.info("NME top1 curve: {}".format(nme_curve["top1"]))
-            logging.info("NME top5 curve: {}\n".format(nme_curve["top5"]))
-
-            print('Average Accuracy (CNN):', sum(cnn_curve["top1"])/len(cnn_curve["top1"]))
-            print('Average Accuracy (NME):', sum(nme_curve["top1"])/len(nme_curve["top1"]))
-
-            logging.info("Average Accuracy (CNN): {}".format(sum(cnn_curve["top1"])/len(cnn_curve["top1"])))
-            logging.info("Average Accuracy (NME): {}".format(sum(nme_curve["top1"])/len(nme_curve["top1"])))
-        else:
-            logging.info("No NME accuracy.")
-            logging.info("CNN: {}".format(cnn_accy["grouped"]))
-
-            cnn_keys = [key for key in cnn_accy["grouped"].keys() if '-' in key]
-            cnn_keys_sorted = sorted(cnn_keys)
-            cnn_values = [cnn_accy["grouped"][key] for key in cnn_keys_sorted]
-            cnn_matrix.append(cnn_values)
-
-            cnn_curve["top1"].append(cnn_accy["top1"])
-            cnn_curve["top5"].append(cnn_accy["top5"])
-
-            logging.info("CNN top1 curve: {}".format(cnn_curve["top1"]))
-            logging.info("CNN top5 curve: {}\n".format(cnn_curve["top5"]))
-
-            print('Average Accuracy (CNN):', sum(cnn_curve["top1"])/len(cnn_curve["top1"]))
-            logging.info("Average Accuracy (CNN): {}".format(sum(cnn_curve["top1"])/len(cnn_curve["top1"])))
-
+        print("CNN top1 curve: {}".format(cnn_curve["top1"]))
+        print("NME top1 curve: {}".format(nme_curve["top1"]))
 
     if len(cnn_matrix)>0:
         np_acctable = np.zeros([task + 1, task + 1])
@@ -147,13 +165,9 @@ def _set_device(args):
     device_type = args["device"]
     gpus = []
 
-    for device in device_type:
-        if device_type == -1:
-            device = torch.device("cpu")
-        else:
-            device = torch.device("cuda:{}".format(device))
+    device = torch.device("mps")
 
-        gpus.append(device)
+    gpus.append(device)
 
     args["device"] = gpus
 

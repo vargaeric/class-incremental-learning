@@ -1,0 +1,248 @@
+Original iCaRL method:
+
+python main.py --config=./exps/icarl.json
+(venv) (base) erikvarga@Eriks-MacBook-Pro-2 PyCIL-master % python main.py --config=./exps/icarl.json
+2024-03-01 01:52:02,242 [trainer.py] => config: ./exps/icarl.json
+2024-03-01 01:52:02,243 [trainer.py] => prefix: reproduce
+2024-03-01 01:52:02,243 [trainer.py] => dataset: cifar100
+2024-03-01 01:52:02,243 [trainer.py] => memory_size: 2000
+2024-03-01 01:52:02,243 [trainer.py] => memory_per_class: 20
+2024-03-01 01:52:02,243 [trainer.py] => fixed_memory: False
+2024-03-01 01:52:02,243 [trainer.py] => shuffle: True
+2024-03-01 01:52:02,243 [trainer.py] => init_cls: 10
+2024-03-01 01:52:02,243 [trainer.py] => increment: 10
+2024-03-01 01:52:02,243 [trainer.py] => model_name: icarl
+2024-03-01 01:52:02,243 [trainer.py] => convnet_type: resnet18
+2024-03-01 01:52:02,243 [trainer.py] => device: [device(type='mps')]
+2024-03-01 01:52:02,243 [trainer.py] => seed: 1993
+Files already downloaded and verified
+Files already downloaded and verified
+2024-03-01 01:52:03,816 [data_manager.py] => [68, 56, 78, 8, 23, 84, 90, 65, 74, 76, 40, 89, 3, 92, 55, 9, 26, 80, 43, 38, 58, 70, 77, 1, 85, 19, 17, 50, 28, 53, 13, 81, 45, 82, 6, 59, 83, 16, 15, 44, 91, 41, 72, 60, 79, 52, 20, 10, 31, 54, 37, 95, 14, 71, 96, 98, 97, 2, 64, 66, 42, 22, 35, 86, 24, 34, 87, 21, 99, 0, 88, 27, 18, 94, 11, 12, 47, 25, 30, 46, 62, 69, 36, 61, 7, 63, 75, 5, 32, 4, 51, 48, 73, 93, 39, 67, 29, 49, 57, 33]
+Learning on 0-10
+  0%|                                                                                                                                                                               | 0/10 [00:00<?, ?it/s]Task 0, Epoch 1/10 => Loss 5.054, Train_accy 13.30, Test_accy 8.50
+ 10%|████████████████▌                                                                                                                                                     | 1/10 [01:47<16:09, 107.68s/it]Task 0, Epoch 2/10 => Loss 4.141, Train_accy 13.50
+ 20%|█████████████████████████████████▍                                                                                                                                     | 2/10 [02:40<10:05, 75.67s/it]Task 0, Epoch 3/10 => Loss 3.017, Train_accy 14.30
+ 30%|██████████████████████████████████████████████████                                                                                                                     | 3/10 [03:34<07:38, 65.44s/it]Task 0, Epoch 4/10 => Loss 2.477, Train_accy 17.00
+ 40%|██████████████████████████████████████████████████████████████████▊                                                                                                    | 4/10 [04:27<06:04, 60.69s/it]Task 0, Epoch 5/10 => Loss 2.305, Train_accy 18.80
+ 50%|███████████████████████████████████████████████████████████████████████████████████▌                                                                                   | 5/10 [05:20<04:50, 58.00s/it]Task 0, Epoch 6/10 => Loss 2.235, Train_accy 22.80, Test_accy 20.10
+ 60%|████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                  | 6/10 [07:07<04:57, 74.49s/it]Task 0, Epoch 7/10 => Loss 2.142, Train_accy 23.70
+ 70%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                  | 7/10 [08:01<03:23, 67.73s/it]Task 0, Epoch 8/10 => Loss 2.031, Train_accy 25.10
+ 80%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                 | 8/10 [08:54<02:06, 63.19s/it]Task 0, Epoch 9/10 => Loss 2.000, Train_accy 26.90
+ 90%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                | 9/10 [09:48<01:00, 60.15s/it]Task 0, Epoch 10/10 => Loss 1.937, Train_accy 29.60
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [10:41<00:00, 64.15s/it]
+Exemplar size: 100
+CNN top1 curve: [29.7]
+NME top1 curve: [27.5]
+Learning on 10-20
+  0%|                                                                                                                                                                               | 0/10 [00:00<?, ?it/s]Task 1, Epoch 1/10 => Loss 5.015, Train_accy 11.45, Test_accy 11.40
+ 10%|████████████████▌                                                                                                                                                     | 1/10 [01:47<16:06, 107.39s/it]Task 1, Epoch 2/10 => Loss 4.637, Train_accy 20.91
+ 20%|█████████████████████████████████▍                                                                                                                                     | 2/10 [02:41<10:07, 75.89s/it]Task 1, Epoch 3/10 => Loss 4.529, Train_accy 23.55
+ 30%|██████████████████████████████████████████████████                                                                                                                     | 3/10 [03:34<07:40, 65.73s/it]Task 1, Epoch 4/10 => Loss 4.458, Train_accy 25.27
+ 40%|██████████████████████████████████████████████████████████████████▊                                                                                                    | 4/10 [04:28<06:05, 60.97s/it]Task 1, Epoch 5/10 => Loss 4.387, Train_accy 28.27
+ 50%|███████████████████████████████████████████████████████████████████████████████████▌                                                                                   | 5/10 [05:22<04:51, 58.32s/it]Task 1, Epoch 6/10 => Loss 4.341, Train_accy 27.27, Test_accy 13.65
+ 60%|████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                  | 6/10 [07:08<04:59, 74.82s/it]Task 1, Epoch 7/10 => Loss 4.342, Train_accy 27.18
+ 70%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                  | 7/10 [08:02<03:23, 67.91s/it]Task 1, Epoch 8/10 => Loss 4.304, Train_accy 29.82
+ 80%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                 | 8/10 [08:56<02:06, 63.36s/it]Task 1, Epoch 9/10 => Loss 4.264, Train_accy 30.36
+ 90%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                | 9/10 [09:50<01:00, 60.37s/it]Task 1, Epoch 10/10 => Loss 4.302, Train_accy 29.64
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [10:43<00:00, 64.38s/it]
+Exemplar size: 200
+CNN top1 curve: [29.7, 16.05]
+NME top1 curve: [27.5, 21.95]
+Learning on 20-30
+  0%|                                                                                                                                                                               | 0/10 [00:00<?, ?it/s]Task 2, Epoch 1/10 => Loss 6.079, Train_accy 9.00, Test_accy 7.77
+ 10%|████████████████▌                                                                                                                                                     | 1/10 [01:48<16:12, 108.07s/it]Task 2, Epoch 2/10 => Loss 5.381, Train_accy 21.42
+ 20%|█████████████████████████████████▍                                                                                                                                     | 2/10 [02:42<10:09, 76.24s/it]Task 2, Epoch 3/10 => Loss 5.170, Train_accy 26.33
+ 30%|██████████████████████████████████████████████████                                                                                                                     | 3/10 [03:35<07:41, 65.98s/it]Task 2, Epoch 4/10 => Loss 5.017, Train_accy 28.08
+ 40%|██████████████████████████████████████████████████████████████████▊                                                                                                    | 4/10 [04:29<06:07, 61.17s/it]Task 2, Epoch 5/10 => Loss 4.986, Train_accy 32.58
+ 50%|███████████████████████████████████████████████████████████████████████████████████▌                                                                                   | 5/10 [05:23<04:52, 58.47s/it]Task 2, Epoch 6/10 => Loss 4.925, Train_accy 34.83, Test_accy 14.90
+ 60%|████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                  | 6/10 [07:10<05:00, 75.10s/it]Task 2, Epoch 7/10 => Loss 4.873, Train_accy 36.25
+ 70%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                  | 7/10 [08:04<03:24, 68.12s/it]Task 2, Epoch 8/10 => Loss 4.841, Train_accy 36.58
+ 80%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                 | 8/10 [08:58<02:07, 63.55s/it]Task 2, Epoch 9/10 => Loss 4.830, Train_accy 40.67
+ 90%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                | 9/10 [09:52<01:00, 60.63s/it]Task 2, Epoch 10/10 => Loss 4.807, Train_accy 41.33
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [10:46<00:00, 64.63s/it]
+Exemplar size: 300
+CNN top1 curve: [29.7, 16.05, 14.97]
+NME top1 curve: [27.5, 21.95, 20.47]
+
+
+
+
+
+
+
+
+
+
+
+
+
+K Means iCaRL:
+
+(venv) (base) erikvarga@Eriks-MacBook-Pro-2 PyCIL-master % python main.py --config=./exps/icarl.json
+2024-03-01 16:36:42,578 [trainer.py] => config: ./exps/icarl.json
+2024-03-01 16:36:42,578 [trainer.py] => prefix: reproduce
+2024-03-01 16:36:42,578 [trainer.py] => dataset: cifar100
+2024-03-01 16:36:42,578 [trainer.py] => memory_size: 2000
+2024-03-01 16:36:42,578 [trainer.py] => memory_per_class: 20
+2024-03-01 16:36:42,578 [trainer.py] => fixed_memory: False
+2024-03-01 16:36:42,578 [trainer.py] => shuffle: True
+2024-03-01 16:36:42,578 [trainer.py] => init_cls: 10
+2024-03-01 16:36:42,578 [trainer.py] => increment: 10
+2024-03-01 16:36:42,578 [trainer.py] => model_name: icarl
+2024-03-01 16:36:42,578 [trainer.py] => convnet_type: resnet18
+2024-03-01 16:36:42,579 [trainer.py] => device: [device(type='mps')]
+2024-03-01 16:36:42,579 [trainer.py] => seed: 1993
+Files already downloaded and verified
+Files already downloaded and verified
+2024-03-01 16:36:44,133 [data_manager.py] => [68, 56, 78, 8, 23, 84, 90, 65, 74, 76, 40, 89, 3, 92, 55, 9, 26, 80, 43, 38, 58, 70, 77, 1, 85, 19, 17, 50, 28, 53, 13, 81, 45, 82, 6, 59, 83, 16, 15, 44, 91, 41, 72, 60, 79, 52, 20, 10, 31, 54, 37, 95, 14, 71, 96, 98, 97, 2, 64, 66, 42, 22, 35, 86, 24, 34, 87, 21, 99, 0, 88, 27, 18, 94, 11, 12, 47, 25, 30, 46, 62, 69, 36, 61, 7, 63, 75, 5, 32, 4, 51, 48, 73, 93, 39, 67, 29, 49, 57, 33]
+Learning on 0-10
+  0%|                                                                                                                                                                               | 0/10 [00:00<?, ?it/sTask 0, Epoch 1/10 => Loss 5.054, Train_accy 13.30, Test_accy 8.50
+ 10%|████████████████▌                                                                                                                                                     | 1/10 [01:47<16:05, 107.26s/it]Task 0, Epoch 2/10 => Loss 4.141, Train_accy 13.50
+ 20%|█████████████████████████████████▍                                                                                                                                     | 2/10 [02:40<10:04, 75.59s/it]Task 0, Epoch 3/10 => Loss 3.017, Train_accy 14.30
+ 30%|██████████████████████████████████████████████████                                                                                                                     | 3/10 [03:34<07:38, 65.45s/it]Task 0, Epoch 4/10 => Loss 2.477, Train_accy 17.00
+ 40%|██████████████████████████████████████████████████████████████████▊                                                                                                    | 4/10 [04:27<06:04, 60.68s/it]Task 0, Epoch 5/10 => Loss 2.305, Train_accy 18.80
+ 50%|███████████████████████████████████████████████████████████████████████████████████▌                                                                                   | 5/10 [05:20<04:50, 58.04s/it]Task 0, Epoch 6/10 => Loss 2.235, Train_accy 22.80, Test_accy 20.10
+ 60%|████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                  | 6/10 [07:06<04:57, 74.37s/it]Task 0, Epoch 7/10 => Loss 2.142, Train_accy 23.70
+ 70%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                  | 7/10 [08:00<03:22, 67.50s/it]Task 0, Epoch 8/10 => Loss 2.031, Train_accy 25.10
+ 80%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                 | 8/10 [08:53<02:06, 63.00s/it]Task 0, Epoch 9/10 => Loss 2.000, Train_accy 26.90
+ 90%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                | 9/10 [09:47<01:00, 60.01s/it]Task 0, Epoch 10/10 => Loss 1.937, Train_accy 29.60
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [10:40<00:00, 64.04s/it]
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/threadpoolctl.py:1186: RuntimeWarning: 
+Found Intel OpenMP ('libiomp') and LLVM OpenMP ('libomp') loaded at
+the same time. Both libraries are known to be incompatible and this
+can cause random crashes or deadlocks on Linux when loaded in the
+same Python program.
+Using threadpoolctl may cause crashes or deadlocks. For more
+information and possible workarounds, please see
+    https://github.com/joblib/threadpoolctl/blob/master/multiple_openmp.md
+
+  warnings.warn(msg, RuntimeWarning)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+Exemplar size: 100
+CNN top1 curve: [29.7]
+NME top1 curve: [21.8]
+Learning on 10-20
+  0%|                                                                                                                                                                               | 0/10 [00:00<?, ?it/s]Task 1, Epoch 1/10 => Loss 5.029, Train_accy 10.55, Test_accy 10.05
+ 10%|████████████████▌                                                                                                                                                     | 1/10 [01:47<16:07, 107.46s/it]Task 1, Epoch 2/10 => Loss 4.651, Train_accy 20.91
+ 20%|█████████████████████████████████▍                                                                                                                                     | 2/10 [02:41<10:06, 75.79s/it]Task 1, Epoch 3/10 => Loss 4.557, Train_accy 24.36
+ 30%|██████████████████████████████████████████████████                                                                                                                     | 3/10 [03:34<07:39, 65.63s/it]Task 1, Epoch 4/10 => Loss 4.492, Train_accy 26.00
+ 40%|██████████████████████████████████████████████████████████████████▊                                                                                                    | 4/10 [04:28<06:05, 60.89s/it]Task 1, Epoch 5/10 => Loss 4.431, Train_accy 27.45
+ 50%|███████████████████████████████████████████████████████████████████████████████████▌                                                                                   | 5/10 [05:21<04:51, 58.28s/it]Task 1, Epoch 6/10 => Loss 4.372, Train_accy 29.09, Test_accy 14.00
+ 60%|████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                  | 6/10 [07:08<04:58, 74.67s/it]Task 1, Epoch 7/10 => Loss 4.386, Train_accy 28.45
+ 70%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                  | 7/10 [08:02<03:23, 67.80s/it]Task 1, Epoch 8/10 => Loss 4.348, Train_accy 28.82
+ 80%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                 | 8/10 [08:55<02:06, 63.32s/it]Task 1, Epoch 9/10 => Loss 4.312, Train_accy 30.73
+ 90%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                | 9/10 [09:49<01:00, 60.29s/it]Task 1, Epoch 10/10 => Loss 4.357, Train_accy 29.09
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [10:42<00:00, 64.30s/it]
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+Exemplar size: 200
+CNN top1 curve: [29.7, 16.2]
+NME top1 curve: [21.8, 18.55]
+Learning on 20-30
+  0%|                                                                                                                                                                               | 0/10 [00:00<?, ?it/s]Task 2, Epoch 1/10 => Loss 6.029, Train_accy 10.25, Test_accy 7.37
+ 10%|████████████████▌                                                                                                                                                     | 1/10 [01:48<16:12, 108.08s/it]Task 2, Epoch 2/10 => Loss 5.456, Train_accy 21.50
+ 20%|█████████████████████████████████▍                                                                                                                                     | 2/10 [02:41<10:08, 76.12s/it]Task 2, Epoch 3/10 => Loss 5.262, Train_accy 25.50
+ 30%|██████████████████████████████████████████████████                                                                                                                     | 3/10 [03:35<07:41, 65.91s/it]Task 2, Epoch 4/10 => Loss 5.115, Train_accy 28.00
+ 40%|██████████████████████████████████████████████████████████████████▊                                                                                                    | 4/10 [04:29<06:07, 61.31s/it]Task 2, Epoch 5/10 => Loss 5.101, Train_accy 30.17
+ 50%|███████████████████████████████████████████████████████████████████████████████████▌                                                                                   | 5/10 [05:23<04:53, 58.67s/it]Task 2, Epoch 6/10 => Loss 5.033, Train_accy 33.33, Test_accy 13.63
+ 60%|████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                  | 6/10 [07:10<05:00, 75.14s/it]Task 2, Epoch 7/10 => Loss 4.980, Train_accy 33.50
+ 70%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                  | 7/10 [08:04<03:24, 68.13s/it]Task 2, Epoch 8/10 => Loss 4.903, Train_accy 37.58
+ 80%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                 | 8/10 [08:58<02:07, 63.54s/it]Task 2, Epoch 9/10 => Loss 4.896, Train_accy 39.50
+ 90%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                | 9/10 [09:52<01:00, 60.47s/it]Task 2, Epoch 10/10 => Loss 4.898, Train_accy 39.25
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [10:46<00:00, 64.64s/it]
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/sklearn/cluster/_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)
+Exemplar size: 300
+CNN top1 curve: [29.7, 16.2, 15.07]
+NME top1 curve: [21.8, 18.55, 17.23]
+Learning on 30-40
+  0%|                                                                                                                                                                               | 0/10 [00:00<?, ?it/s]Task 3, Epoch 1/10 => Loss 6.661, Train_accy 10.08, Test_accy 7.08
+ 10%|████████████████▌                                                                                                                                                     | 1/10 [01:48<16:19, 108.86s/it]Task 3, Epoch 2/10 => Loss 5.952, Train_accy 23.00
+ 20%|█████████████████████████████████▍                                                                                                                                     | 2/10 [02:42<10:12, 76.60s/it]Task 3, Epoch 3/10 => Loss 5.735, Train_accy 26.23
+ 30%|██████████████████████████████████████████████████                                                                                                                     | 3/10 [03:36<07:43, 66.25s/it]Task 3, Epoch 4/10 => Loss 5.648, Train_accy 27.08
+ 40%|██████████████████████████████████████████████████████████████████▊                                                                                                    | 4/10 [04:30<06:08, 61.39s/it] 40%|██████████████████████████████████████████████████████████████████▊                                                                                                    | 4/10 [05:11<07:47, 77.96s/it]
+Traceback (most recent call last):
+  File "main.py", line 31, in <module>
+    main()
+  File "main.py", line 12, in main
+    train(args)
+  File "/Users/erikvarga/Downloads/PyCIL-master/trainer.py", line 19, in train
+    _train(args)
+  File "/Users/erikvarga/Downloads/PyCIL-master/trainer.py", line 68, in _train
+    model.incremental_train(data_manager)
+  File "/Users/erikvarga/Downloads/PyCIL-master/models/icarl.py", line 71, in incremental_train
+    self._train(self.train_loader, self.test_loader)
+  File "/Users/erikvarga/Downloads/PyCIL-master/models/icarl.py", line 102, in _train
+    self._update_representation(train_loader, test_loader, optimizer, scheduler)
+  File "/Users/erikvarga/Downloads/PyCIL-master/models/icarl.py", line 157, in _update_representation
+    for i, (_, inputs, targets) in enumerate(train_loader):
+  File "/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1318, in _next_data
+    self._shutdown_workers()
+  File "/Users/erikvarga/Downloads/PyCIL-master/venv/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1443, in _shutdown_workers
+    w.join(timeout=_utils.MP_STATUS_CHECK_INTERVAL)
+  File "/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/lib/python3.8/multiprocessing/process.py", line 149, in join
+    res = self._popen.wait(timeout)
+  File "/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/lib/python3.8/multiprocessing/popen_fork.py", line 44, in wait
+    if not wait([self.sentinel], timeout):
+  File "/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/lib/python3.8/multiprocessing/connection.py", line 931, in wait
+    ready = selector.select(timeout)
+  File "/usr/local/opt/python@3.8/Frameworks/Python.framework/Versions/3.8/lib/python3.8/selectors.py", line 415, in select
+    fd_event_list = self._selector.poll(timeout)
+KeyboardInterrupt

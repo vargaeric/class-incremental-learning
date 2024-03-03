@@ -13,14 +13,14 @@ from utils.toolkit import target2onehot, tensor2numpy
 
 EPSILON = 1e-8
 
-init_epoch = 200
+init_epoch = 10
 init_lr = 0.1
 init_milestones = [60, 120, 170]
 init_lr_decay = 0.1
 init_weight_decay = 0.0005
 
 
-epochs = 170
+epochs = init_epoch
 lrate = 0.1
 milestones = [80, 120]
 lrate_decay = 0.1
@@ -29,6 +29,7 @@ weight_decay = 2e-4
 num_workers = 8
 T = 2
 
+NUMBER_OF_EXEMPLARS_PER_CLASS = 10
 
 class iCaRL(BaseLearner):
     def __init__(self, args):
@@ -38,7 +39,8 @@ class iCaRL(BaseLearner):
     def after_task(self):
         self._old_network = self._network.copy().freeze()
         self._known_classes = self._total_classes
-        logging.info("Exemplar size: {}".format(self.exemplar_size))
+        # logging.info("Exemplar size: {}".format(self.exemplar_size))
+        print("Exemplar size: {}".format(self.exemplar_size))
 
     def incremental_train(self, data_manager):
         self._cur_task += 1
@@ -46,9 +48,7 @@ class iCaRL(BaseLearner):
             self._cur_task
         )
         self._network.update_fc(self._total_classes)
-        logging.info(
-            "Learning on {}-{}".format(self._known_classes, self._total_classes)
-        )
+        print("Learning on {}-{}".format(self._known_classes, self._total_classes))
 
         train_dataset = data_manager.get_dataset(
             np.arange(self._known_classes, self._total_classes),
@@ -69,7 +69,7 @@ class iCaRL(BaseLearner):
         if len(self._multiple_gpus) > 1:
             self._network = nn.DataParallel(self._network, self._multiple_gpus)
         self._train(self.train_loader, self.test_loader)
-        self.build_rehearsal_memory(data_manager, self.samples_per_class)
+        self.build_rehearsal_memory(data_manager, NUMBER_OF_EXEMPLARS_PER_CLASS)
         if len(self._multiple_gpus) > 1:
             self._network = self._network.module
 
@@ -143,9 +143,10 @@ class iCaRL(BaseLearner):
                     train_acc,
                 )
 
-            prog_bar.set_description(info)
+            print(info)
+            # prog_bar.set_description(info)
 
-        logging.info(info)
+        # logging.info(info)
 
     def _update_representation(self, train_loader, test_loader, optimizer, scheduler):
         prog_bar = tqdm(range(epochs))
@@ -195,8 +196,10 @@ class iCaRL(BaseLearner):
                     losses / len(train_loader),
                     train_acc,
                 )
-            prog_bar.set_description(info)
-        logging.info(info)
+
+            print(info)
+
+        # logging.info(info)
 
 
 def _KD_loss(pred, soft, T):

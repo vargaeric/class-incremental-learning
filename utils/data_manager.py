@@ -6,6 +6,8 @@ from torchvision import transforms
 from utils.data import iCIFAR10, iCIFAR100, iImageNet100, iImageNet1000
 from tqdm import tqdm
 
+NUMBER_OF_INSTANCES_PER_CLASS = 100
+
 class DataManager(object):
     def __init__(self, dataset_name, shuffle, seed, init_cls, increment):
         self.dataset_name = dataset_name
@@ -32,7 +34,7 @@ class DataManager(object):
         return len(self._class_order)
 
     def get_dataset(
-        self, indices, source, mode, appendent=None, ret_data=False, m_rate=None
+            self, indices, source, mode, appendent=None, ret_data=False, m_rate=None
     ):
         if source == "train":
             x, y = self._train_data, self._train_targets
@@ -56,7 +58,7 @@ class DataManager(object):
         else:
             raise ValueError("Unknown mode {}.".format(mode))
 
-        data, targets = [], []
+        class_data_list = {}
         for idx in indices:
             if m_rate is None:
                 class_data, class_targets = self._select(
@@ -66,22 +68,35 @@ class DataManager(object):
                 class_data, class_targets = self._select_rmm(
                     x, y, low_range=idx, high_range=idx + 1, m_rate=m_rate
                 )
-            data.append(class_data)
-            targets.append(class_targets)
+            for data, target in zip(class_data, class_targets):
+                if target not in class_data_list:
+                    class_data_list[target] = []
+                if len(class_data_list[target]) < NUMBER_OF_INSTANCES_PER_CLASS:
+                    class_data_list[target].append((data, target))
 
+        data, targets = [], []
+        for class_target, class_examples in class_data_list.items():
+            for example in class_examples:
+                data.append(example[0])
+                targets.append(example[1])
+        # print("-------------")
+        # print(len(data))
+        # print(len(targets))
+        # print("-------------")
         if appendent is not None and len(appendent) != 0:
             appendent_data, appendent_targets = appendent
-            data.append(appendent_data)
-            targets.append(appendent_targets)
+            # Here you might also want to limit appendent data per class to 100
+            data.extend(appendent_data)
+            targets.extend(appendent_targets)
 
-        data, targets = np.concatenate(data), np.concatenate(targets)
+        data, targets = np.stack(data), np.array(targets)
 
         if ret_data:
             return data, targets, DummyDataset(data, targets, trsf, self.use_path)
         else:
             return DummyDataset(data, targets, trsf, self.use_path)
 
-        
+
     def get_finetune_dataset(self,known_classes,total_classes,source,mode,appendent,type="ratio"):
         if source == 'train':
             x, y = self._train_data, self._train_targets
