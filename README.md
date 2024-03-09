@@ -1,5 +1,17 @@
 # Master Thesis Progress Tracking
 
+## Week 2 (03.04 - 03.10)
+
+We have continued to write our own implementation of the iCaRL method. The current 
+state of the code does not yet contain parts of the iCaRL method, nor does it 
+include any other class-incremental learning approach. The code we have written 
+reflects how a machine learning model (ResNet18, in our case) would behave if the 
+data were to come sequentially. This is the foundation upon which any 
+class-incremental learning method can and will be implemented. **The current accuracy
+for 5 tasks (each task containing 20 classes) on the CIFAR-100 dataset is as follows:
+[36.6, 17.0, 9.83, 9.24, 6.85]. We will use these values as an approximate baseline 
+for future implementations and testing.**
+
 ## Week 1 (02.26 - 03.03)
 
 We have changed the class-incremental learning framework that we have used for 
