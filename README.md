@@ -1,5 +1,13 @@
 # Master Thesis Progress Tracking
 
+## Week 3 (03.11 - 03.17)
+
+We have continued to write our own implementation of the iCaRL method. The current 
+state of the code theoretically includes all components of iCaRL, but we have
+encountered some issues. More precisely, when we use the nearest-mean-of-exemplars, 
+the classification is far worse than it is with the base neural network. The 
+execution time is also slow, so it could be improved, but it is not a must.
+
 ## Week 2 (03.04 - 03.10)
 
 We have continued to write our own implementation of the iCaRL method. The current 

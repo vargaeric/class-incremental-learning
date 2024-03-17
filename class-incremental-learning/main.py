@@ -12,6 +12,7 @@ MEMORY_SIZE_PER_CLASS = 1
 BATCH_SIZE = 64
 EPOCHS = 20
 LEARNING_RATE = 0.01
+T = 2
 
 classes_per_task = []
 train_datasets_grouped_by_tasks = []
@@ -20,6 +21,31 @@ current_train_dataset = []
 current_test_dataset = []
 memory_dataset = []
 accuracies_per_tasks = []
+exemplars_means = {}
+
+
+class ModelWrapper(torch.nn.Module):
+    def __init__(self, device, model):
+        super(ModelWrapper, self).__init__()
+
+        self.features = torch.nn.Sequential(*list(model.children())[:-1])
+
+        num_features = model.fc.in_features
+
+        self.fc = torch.nn.Linear(num_features, 100)
+        self.model = model
+
+        self.model.to(device)
+        self.fc.to(device)
+
+    def forward(self, x, extract_features=False):
+        x = self.features(x)
+        x = torch.flatten(x, 1)
+
+        if extract_features:
+            return x
+        else:
+            return self.fc(x)
 
 
 def split_list_equally(lst, num_parts):
@@ -94,17 +120,47 @@ def group_datasets_by_tasks(dataset):
     test_datasets_grouped_by_tasks = get_datasets_grouped_by_tasks(test_data, class_task_relations, False)
 
 
-def select_new_exemplars_for_memory_dataset(dataset):
+def l2_normalization(vector):
+    return torch.nn.functional.normalize(vector, p=2, dim=0)
+
+
+def euclidean_distance(first_vector, second_vector):
+    return torch.norm(first_vector - second_vector, p=2)
+
+
+def select_new_exemplars_for_memory_dataset(device, model, dataset):
+    global exemplars_means
+
     new_memory_dataset = []
-    exemplars_per_class_counts = {}
+    exemplars_per_label = {}
 
     for data, label in dataset:
-        if label not in exemplars_per_class_counts:
-            exemplars_per_class_counts[label] = 0
+        if label not in exemplars_per_label:
+            exemplars_per_label[label] = [data]
+        else:
+            exemplars_per_label[label].append(data)
 
-        if exemplars_per_class_counts[label] < MEMORY_SIZE_PER_CLASS:
-            new_memory_dataset.append((data, label))
-            exemplars_per_class_counts[label] += 1
+    model.eval()
+
+    with torch.no_grad():
+        for index, (label, exemplar) in enumerate(exemplars_per_label.items()):
+            results = model(torch.stack(exemplars_per_label[label]).to(device), extract_features=True)
+
+            features_per_label = [l2_normalization(result) for result in results]
+
+            # features_per_label = [l2_normalization(model(data.to(device).unsqueeze(0), extract_features=True)[0])
+            #                       for data in exemplars_per_label[label]]
+
+            exemplars_means[label] = l2_normalization(torch.stack(features_per_label).mean(dim=0))
+
+            distances = [euclidean_distance(exemplars_means[label], feature) for feature in features_per_label]
+
+            closest_features_indices = sorted(range(len(distances)), key=lambda i: distances[i])[:MEMORY_SIZE_PER_CLASS]
+
+            selected_exemplars = [exemplars_per_label[label][i] for i in closest_features_indices]
+
+            for data in selected_exemplars:
+                new_memory_dataset.append((data, label))
 
     return new_memory_dataset
 
@@ -118,16 +174,19 @@ def create_tensor_dataset(dataset):
     return TensorDataset(torch.stack(data), labels_tensor)
 
 
-def get_datasets(task_nr):
+def get_datasets(device, model, task_nr):
     global current_train_dataset
     global current_test_dataset
     global memory_dataset
 
-    memory_dataset += select_new_exemplars_for_memory_dataset(current_train_dataset)
     current_train_dataset = train_datasets_grouped_by_tasks[task_nr]
     current_test_dataset += test_datasets_grouped_by_tasks[task_nr]
 
-    return create_tensor_dataset(current_train_dataset + memory_dataset), create_tensor_dataset(current_test_dataset)
+    tensor_datasets = create_tensor_dataset(current_train_dataset + memory_dataset), create_tensor_dataset(current_test_dataset)
+
+    memory_dataset += select_new_exemplars_for_memory_dataset(device, model, current_train_dataset)
+
+    return tensor_datasets
 
 
 def get_device():
@@ -135,12 +194,9 @@ def get_device():
 
 
 def get_model(device):
-    model = models.resnet18(weights=None)
-    num_features = model.fc.in_features
-    model.fc = torch.nn.Linear(num_features, 100)
-    model = model.to(device)
+    base_model = models.resnet18(weights=None)
 
-    return model
+    return ModelWrapper(device, base_model)
 
 
 def get_optimizer(model):
@@ -151,20 +207,53 @@ def get_loss_fn():
     return torch.nn.CrossEntropyLoss()
 
 
-def train_loop(train_data_loader, device, model, loss_fn, optimizer):
+def get_knowledge_distillation_loss(pred, soft):
+    pred = torch.log_softmax(pred / T, dim=1)
+    soft = torch.softmax(soft / T, dim=1)
+
+    return -1 * torch.mul(soft, pred).sum() / pred.shape[0]
+
+
+def train_loop(train_data_loader, device, model, old_model, loss_fn, optimizer, first_training):
     model.train()
 
     for batch, (X, y) in enumerate(train_data_loader):
         X, y = X.to(device), y.to(device)
 
-        # Make prediction and calculate the loss function
-        pred = model(X)
-        loss = loss_fn(pred, y)
+        logits = model(X)
+        loss = loss_fn(logits, y)
+
+        if not first_training:
+            old_model_logits = old_model(X)
+            old_classes_nr = int(len(memory_dataset) / MEMORY_SIZE_PER_CLASS)
+
+            loss += get_knowledge_distillation_loss(logits[:, :old_classes_nr], old_model_logits[:, :old_classes_nr])
+
+        # print('loss: ', loss.item())
+
+        # # Apply backpropagation
+        # loss.backward()
+        # optimizer.step()
+        # optimizer.zero_grad()
 
         # Apply backpropagation
+        optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        optimizer.zero_grad()
+
+
+def nearest_mean_of_exemplars_classifier(feature):
+    min_distance = float('inf')
+    closest_key = None
+
+    for label, label_features_mean in exemplars_means.items():
+        distance = euclidean_distance(label_features_mean, feature)
+
+        if distance < min_distance:
+            min_distance = distance
+            closest_key = label
+
+    return closest_key
 
 
 def test_loop(test_data_loader, device, model, loss_fn, epoch):
@@ -177,6 +266,11 @@ def test_loop(test_data_loader, device, model, loss_fn, epoch):
     with torch.no_grad():
         for X, y in test_data_loader:
             X, y = X.to(device), y.to(device)
+            # features = model(X, extract_features=True)
+            #
+            # for i, feature in enumerate(features):
+            #     pred = nearest_mean_of_exemplars_classifier(feature)
+            #     correct += pred == y[i].item()
             pred = model(X)
             test_loss += loss_fn(pred, y).item()
             correct += (pred.max(dim=1).indices == y).type(torch.float).sum().item()
@@ -191,9 +285,7 @@ def test_loop(test_data_loader, device, model, loss_fn, epoch):
         accuracies_per_tasks.append(round(accuracy, 2))
 
 
-def train(train_data_loader, test_data_loader):
-    device = get_device()
-    model = get_model(device)
+def train(device, model, old_model, train_data_loader, test_data_loader, first_training):
     optimizer = get_optimizer(model)
     loss_fn = get_loss_fn()
 
@@ -207,7 +299,7 @@ def train(train_data_loader, test_data_loader):
 
         start_time = time.time()
 
-        train_loop(train_data_loader, device, model, loss_fn, optimizer)
+        train_loop(train_data_loader, device, model, old_model, loss_fn, optimizer, first_training)
         test_loop(test_data_loader, device, model, loss_fn, epoch)
 
         end_time = time.time()
@@ -219,14 +311,21 @@ def train(train_data_loader, test_data_loader):
 
 
 def incremental_learning():
+    device = get_device()
+    model = get_model(device)
+    old_model = get_model(device)
+
     for task_nr in range(TOTAL_TASKS_NR):
         print(f"Task {task_nr + 1}:")
 
-        train_data, test_data = get_datasets(task_nr)
+        train_data, test_data = get_datasets(device, model, task_nr)
+
         train_data_loader = DataLoader(train_data, batch_size=BATCH_SIZE)
         test_data_loader = DataLoader(test_data, batch_size=BATCH_SIZE)
 
-        train(train_data_loader, test_data_loader)
+        train(device, model, old_model, train_data_loader, test_data_loader, task_nr == 0)
+
+        old_model.load_state_dict(model.state_dict())
 
 
 def main():
