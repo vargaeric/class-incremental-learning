@@ -4,6 +4,8 @@ from torchvision import models, datasets
 from torch.utils.data import TensorDataset, DataLoader
 import random
 import time as time
+import numpy as np
+from sklearn.cluster import KMeans
 
 TOTAL_TASKS_NR = 5
 MAX_INSTANCES_PER_CLASS = 100
@@ -13,6 +15,16 @@ BATCH_SIZE = 64
 EPOCHS = 20
 LEARNING_RATE = 0.01
 T = 2
+SEED = 42
+
+torch.manual_seed(SEED)
+torch.cuda.manual_seed(SEED)
+np.random.seed(SEED)
+random.seed(SEED)
+
+# Force PyTorch to use deterministic algorithms
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 
 classes_per_task = []
 train_datasets_grouped_by_tasks = []
@@ -161,6 +173,52 @@ def select_new_exemplars_for_memory_dataset(device, model, dataset):
 
             for data in selected_exemplars:
                 new_memory_dataset.append((data, label))
+
+    return new_memory_dataset
+
+
+def select_exemplars_with_kmeans(device, model, dataset, n_clusters=MEMORY_SIZE_PER_CLASS):
+    global exemplars_means
+
+    new_memory_dataset = []
+    exemplars_per_label = {}
+
+    # Step 1: Extract features for the dataset
+    model.eval()
+
+    with torch.no_grad():
+        for data, label in dataset:
+            if label not in exemplars_per_label:
+                exemplars_per_label[label] = [data]
+            else:
+                exemplars_per_label[label].append(data)
+
+    # Step 2 and 3: Apply K-Means on normalized features
+    for label, exemplars in exemplars_per_label.items():
+        exemplars_tensor = torch.stack(exemplars).to(device)
+        features = model(exemplars_tensor, extract_features=True)
+        normalized_features = [l2_normalization(feature) for feature in features]
+        features_np = torch.stack(normalized_features).cpu().numpy()
+
+        kmeans = KMeans(n_clusters=n_clusters, random_state=SEED).fit(features_np)
+        centers = kmeans.cluster_centers_
+
+        # Step 4: Select nearest exemplars to cluster centers
+        selected_exemplars = []
+
+        for center in centers:
+            distances = np.linalg.norm(features_np - center, axis=1)
+            nearest_index = np.argmin(distances)
+            selected_exemplars.append(exemplars[nearest_index])
+
+        # Normalization and mean calculation for the selected exemplars
+        selected_features = model(torch.stack(selected_exemplars).to(device), extract_features=True)
+        normalized_selected_features = [l2_normalization(feature) for feature in selected_features]
+        exemplars_means[label] = l2_normalization(torch.stack(normalized_selected_features).mean(dim=0))
+
+        # Update memory dataset
+        for data in selected_exemplars:
+            new_memory_dataset.append((data, label))
 
     return new_memory_dataset
 

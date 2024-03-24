@@ -1,5 +1,12 @@
 # Master Thesis Progress Tracking
 
+## Week 4 (03.18 - 03.24)
+
+We have implemented our own method for exemplar selection using K-means clustering;
+however, this function is currently not in use. Furthermore, we have made all the
+necessary modifications to ensure the reproducibility of our experiments. This
+includes setting the seeds for all the packages we have used.
+
 ## Week 3 (03.11 - 03.17)
 
 We have continued to write our own implementation of the iCaRL method. The current 
