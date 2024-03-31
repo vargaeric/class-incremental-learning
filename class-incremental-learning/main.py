@@ -223,6 +223,59 @@ def select_exemplars_with_kmeans(device, model, dataset, n_clusters=MEMORY_SIZE_
     return new_memory_dataset
 
 
+def select_exemplars_by_median(device, model, dataset, n_exemplars=MEMORY_SIZE_PER_CLASS):
+    exemplars_means = {}
+    new_memory_dataset = []
+
+    model.eval()
+
+    with torch.no_grad():
+        for label in set(label for _, label in dataset):
+            class_samples = [data for data, lbl in dataset if lbl == label]
+            features = torch.stack([model(data.unsqueeze(0).to(device), extract_features=True).squeeze() for data in class_samples])
+
+            # Compute the median of the class features
+            median = features.median(dim=0).values
+            exemplars_means[label] = median
+
+            distances = torch.norm(features - median, dim=1)
+            closest_indices = distances.topk(n_exemplars, largest=False).indices
+
+            for idx in closest_indices:
+                new_memory_dataset.append((class_samples[idx], label))
+
+    return new_memory_dataset
+
+def select_exemplars_by_density(device, model, dataset, n_exemplars=MEMORY_SIZE_PER_CLASS):
+    new_memory_dataset = []
+    exemplars_per_label = {}
+
+    model.eval()
+
+    with torch.no_grad():
+        for data, label in dataset:
+            if label not in exemplars_per_label:
+                exemplars_per_label[label] = [data]
+            else:
+                exemplars_per_label[label].append(data)
+
+        for label, exemplars in exemplars_per_label.items():
+            exemplars_tensor = torch.stack(exemplars).to(device)
+            features = model(exemplars_tensor, extract_features=True)
+
+            # Compute the density of each exemplar
+            density_scores = torch.sum(-torch.cdist(features, features, p=2), dim=1)
+
+            # Select exemplars with highest density
+            selected_indices = torch.topk(density_scores, k=n_exemplars).indices
+            selected_exemplars = [exemplars[i] for i in selected_indices]
+
+            for exemplar in selected_exemplars:
+                new_memory_dataset.append((exemplar, label))
+
+    return new_memory_dataset
+
+
 def create_tensor_dataset(dataset):
     data = [x[0] for x in dataset]
     labels = [x[1] for x in dataset]

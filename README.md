@@ -1,5 +1,22 @@
 # Master Thesis Progress Tracking
 
+## Week 5 (03.25 - 03.31)
+
+We have implemented two new methods for exemplar selection:
+
+**Median Selection**:
+This method selects exemplars based on their proximity to the median of the class 
+features instead of the mean. This can be more robust to outliers compared to the 
+mean-based selection.
+
+**Density-Based Selection**:
+Select exemplars based on a density measure, where exemplars are chosen from dense 
+regions of the feature space, assuming that these regions represent the class more 
+accurately.
+
+Using these two new methods, we will conduct several experiments to see if we can 
+achieve higher accuracies.
+
 ## Week 4 (03.18 - 03.24)
 
 We have implemented our own method for exemplar selection using K-means clustering;
