@@ -1,5 +1,12 @@
 # Master Thesis Progress Tracking
 
+## Week 6 (04.01 - 04.07)
+
+This week, there were no significant changes made to the code because we focused 
+more on trying to reproduce the results from the original iCaRL method's paper. 
+These attempts mainly involved adjusting the hyperparameters of our model to 
+match those specified in the iCaRL paper.
+
 ## Week 5 (03.25 - 03.31)
 
 We have implemented two new methods for exemplar selection:
