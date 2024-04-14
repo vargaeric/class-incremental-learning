@@ -1,5 +1,16 @@
 # Master Thesis Progress Tracking
 
+## Week 7 (04.08 - 04.14)
+
+The main contribution to the codebase this week was the creation of a logging 
+system that not only displays results in real time in the console but also saves 
+the outputs to a file if the `LOG_TO_FILE` constant is set to `True`. Additionally,
+we have adjusted the hyperparameters according to the original iCaRL method in 
+order to reproduce the results of the approach. These settings are actually the 
+final results from last week's attempts (Week 6). Furthermore, we have corrected 
+some of the errors and warnings that appeared during the runtime of the exemplar 
+selection using the K-Means clustering algorithm.
+
 ## Week 6 (04.01 - 04.07)
 
 This week, there were no significant changes made to the code because we focused 

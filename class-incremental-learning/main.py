@@ -4,25 +4,28 @@ from torchvision import models, datasets
 from torch.utils.data import TensorDataset, DataLoader
 import random
 import time as time
+from datetime import datetime
 import numpy as np
 from sklearn.cluster import KMeans
 
 TOTAL_TASKS_NR = 5
-MAX_INSTANCES_PER_CLASS = 100
-MEMORY_SIZE_PER_CLASS = 1
-
-BATCH_SIZE = 64
-EPOCHS = 20
-LEARNING_RATE = 0.01
+MAX_INSTANCES_PER_CLASS = 500
+MEMORY_SIZE_PER_CLASS = 20
+BATCH_SIZE = 128
+EPOCHS = 70
+LEARNING_RATE = 2.0
 T = 2
 SEED = 42
+
+LOG_TO_FILE = True
+RESULTS_FOLDER_NAME = 'results'
+f = None
 
 torch.manual_seed(SEED)
 torch.cuda.manual_seed(SEED)
 np.random.seed(SEED)
 random.seed(SEED)
 
-# Force PyTorch to use deterministic algorithms
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
@@ -34,6 +37,20 @@ current_test_dataset = []
 memory_dataset = []
 accuracies_per_tasks = []
 exemplars_means = {}
+
+
+def log(text, end='\n'):
+    print(text, end=end)
+
+    if LOG_TO_FILE:
+        f.write(f"{text}{end}")
+
+
+def get_current_date_time():
+    current_time_seconds = time.time()
+    current_time_datetime = datetime.fromtimestamp(current_time_seconds)
+
+    return current_time_datetime.strftime('%Y_%m_%d_%H_%M_%S')
 
 
 class ModelWrapper(torch.nn.Module):
@@ -140,7 +157,7 @@ def euclidean_distance(first_vector, second_vector):
     return torch.norm(first_vector - second_vector, p=2)
 
 
-def select_new_exemplars_for_memory_dataset(device, model, dataset):
+def select_new_exemplars_by_herding(device, model, dataset):
     global exemplars_means
 
     new_memory_dataset = []
@@ -157,18 +174,10 @@ def select_new_exemplars_for_memory_dataset(device, model, dataset):
     with torch.no_grad():
         for index, (label, exemplar) in enumerate(exemplars_per_label.items()):
             results = model(torch.stack(exemplars_per_label[label]).to(device), extract_features=True)
-
             features_per_label = [l2_normalization(result) for result in results]
-
-            # features_per_label = [l2_normalization(model(data.to(device).unsqueeze(0), extract_features=True)[0])
-            #                       for data in exemplars_per_label[label]]
-
             exemplars_means[label] = l2_normalization(torch.stack(features_per_label).mean(dim=0))
-
             distances = [euclidean_distance(exemplars_means[label], feature) for feature in features_per_label]
-
             closest_features_indices = sorted(range(len(distances)), key=lambda i: distances[i])[:MEMORY_SIZE_PER_CLASS]
-
             selected_exemplars = [exemplars_per_label[label][i] for i in closest_features_indices]
 
             for data in selected_exemplars:
@@ -198,9 +207,9 @@ def select_exemplars_with_kmeans(device, model, dataset, n_clusters=MEMORY_SIZE_
         exemplars_tensor = torch.stack(exemplars).to(device)
         features = model(exemplars_tensor, extract_features=True)
         normalized_features = [l2_normalization(feature) for feature in features]
-        features_np = torch.stack(normalized_features).cpu().numpy()
+        features_np = torch.stack(normalized_features).cpu().detach().numpy()
 
-        kmeans = KMeans(n_clusters=n_clusters, random_state=SEED).fit(features_np)
+        kmeans = KMeans(n_clusters=n_clusters, random_state=SEED, n_init=10).fit(features_np)
         centers = kmeans.cluster_centers_
 
         # Step 4: Select nearest exemplars to cluster centers
@@ -224,7 +233,7 @@ def select_exemplars_with_kmeans(device, model, dataset, n_clusters=MEMORY_SIZE_
 
 
 def select_exemplars_by_median(device, model, dataset, n_exemplars=MEMORY_SIZE_PER_CLASS):
-    exemplars_means = {}
+    exemplars_means_m = {}
     new_memory_dataset = []
 
     model.eval()
@@ -232,11 +241,13 @@ def select_exemplars_by_median(device, model, dataset, n_exemplars=MEMORY_SIZE_P
     with torch.no_grad():
         for label in set(label for _, label in dataset):
             class_samples = [data for data, lbl in dataset if lbl == label]
-            features = torch.stack([model(data.unsqueeze(0).to(device), extract_features=True).squeeze() for data in class_samples])
+            features = torch.stack(
+                [model(data.unsqueeze(0).to(device), extract_features=True).squeeze() for data in class_samples]
+            )
 
             # Compute the median of the class features
             median = features.median(dim=0).values
-            exemplars_means[label] = median
+            exemplars_means_m[label] = median
 
             distances = torch.norm(features - median, dim=1)
             closest_indices = distances.topk(n_exemplars, largest=False).indices
@@ -245,6 +256,7 @@ def select_exemplars_by_median(device, model, dataset, n_exemplars=MEMORY_SIZE_P
                 new_memory_dataset.append((class_samples[idx], label))
 
     return new_memory_dataset
+
 
 def select_exemplars_by_density(device, model, dataset, n_exemplars=MEMORY_SIZE_PER_CLASS):
     new_memory_dataset = []
@@ -266,7 +278,7 @@ def select_exemplars_by_density(device, model, dataset, n_exemplars=MEMORY_SIZE_
             # Compute the density of each exemplar
             density_scores = torch.sum(-torch.cdist(features, features, p=2), dim=1)
 
-            # Select exemplars with highest density
+            # Select exemplars with the highest density
             selected_indices = torch.topk(density_scores, k=n_exemplars).indices
             selected_exemplars = [exemplars[i] for i in selected_indices]
 
@@ -285,7 +297,7 @@ def create_tensor_dataset(dataset):
     return TensorDataset(torch.stack(data), labels_tensor)
 
 
-def get_datasets(device, model, task_nr):
+def get_datasets(device, model, task_nr, exemplar_selection_method):
     global current_train_dataset
     global current_test_dataset
     global memory_dataset
@@ -293,9 +305,10 @@ def get_datasets(device, model, task_nr):
     current_train_dataset = train_datasets_grouped_by_tasks[task_nr]
     current_test_dataset += test_datasets_grouped_by_tasks[task_nr]
 
-    tensor_datasets = create_tensor_dataset(current_train_dataset + memory_dataset), create_tensor_dataset(current_test_dataset)
+    tensor_datasets = create_tensor_dataset(current_train_dataset + memory_dataset), create_tensor_dataset(
+        current_test_dataset)
 
-    memory_dataset += select_new_exemplars_for_memory_dataset(device, model, current_train_dataset)
+    memory_dataset += exemplar_selection_method(device, model, current_train_dataset)
 
     return tensor_datasets
 
@@ -311,7 +324,7 @@ def get_model(device):
 
 
 def get_optimizer(model):
-    return torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
+    return torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, weight_decay=0.00001)
 
 
 def get_loss_fn():
@@ -325,46 +338,28 @@ def get_knowledge_distillation_loss(pred, soft):
     return -1 * torch.mul(soft, pred).sum() / pred.shape[0]
 
 
+def adjust_learning_rate(optimizer, epoch):
+    if epoch == 49 or epoch == 63:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] /= 5
+
+
 def train_loop(train_data_loader, device, model, old_model, loss_fn, optimizer, first_training):
     model.train()
 
     for batch, (X, y) in enumerate(train_data_loader):
         X, y = X.to(device), y.to(device)
-
         logits = model(X)
         loss = loss_fn(logits, y)
 
         if not first_training:
             old_model_logits = old_model(X)
             old_classes_nr = int(len(memory_dataset) / MEMORY_SIZE_PER_CLASS)
-
             loss += get_knowledge_distillation_loss(logits[:, :old_classes_nr], old_model_logits[:, :old_classes_nr])
 
-        # print('loss: ', loss.item())
-
-        # # Apply backpropagation
-        # loss.backward()
-        # optimizer.step()
-        # optimizer.zero_grad()
-
-        # Apply backpropagation
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
-
-def nearest_mean_of_exemplars_classifier(feature):
-    min_distance = float('inf')
-    closest_key = None
-
-    for label, label_features_mean in exemplars_means.items():
-        distance = euclidean_distance(label_features_mean, feature)
-
-        if distance < min_distance:
-            min_distance = distance
-            closest_key = label
-
-    return closest_key
 
 
 def test_loop(test_data_loader, device, model, loss_fn, epoch):
@@ -377,11 +372,6 @@ def test_loop(test_data_loader, device, model, loss_fn, epoch):
     with torch.no_grad():
         for X, y in test_data_loader:
             X, y = X.to(device), y.to(device)
-            # features = model(X, extract_features=True)
-            #
-            # for i, feature in enumerate(features):
-            #     pred = nearest_mean_of_exemplars_classifier(feature)
-            #     correct += pred == y[i].item()
             pred = model(X)
             test_loss += loss_fn(pred, y).item()
             correct += (pred.max(dim=1).indices == y).type(torch.float).sum().item()
@@ -390,7 +380,7 @@ def test_loop(test_data_loader, device, model, loss_fn, epoch):
     correct /= size
     accuracy = 100 * correct
 
-    print(f"accuracy: {accuracy:.2f}, avg loss: {test_loss:.5f}", end=' ')
+    log(f"accuracy: {accuracy:.2f}, avg loss: {test_loss:.5f}", ' ')
 
     if epoch == EPOCHS - 1:
         accuracies_per_tasks.append(round(accuracy, 2))
@@ -400,36 +390,37 @@ def train(device, model, old_model, train_data_loader, test_data_loader, first_t
     optimizer = get_optimizer(model)
     loss_fn = get_loss_fn()
 
-    print()
-    print(f"Total instances for training: {len(train_data_loader.dataset)}")
-    print(f"Total instances for testing: {len(test_data_loader.dataset)}")
-    print()
+    log('')
+    log(f"Total instances for training: {len(train_data_loader.dataset)}")
+    log(f"Total instances for testing: {len(test_data_loader.dataset)}")
+    log('')
 
     for epoch in range(EPOCHS):
-        print("Epoch {:2d} - ".format(epoch + 1), end='')
+        log("Epoch {:2d} - ".format(epoch + 1), '')
 
         start_time = time.time()
 
+        adjust_learning_rate(optimizer, epoch)
         train_loop(train_data_loader, device, model, old_model, loss_fn, optimizer, first_training)
         test_loop(test_data_loader, device, model, loss_fn, epoch)
 
         end_time = time.time()
         epoch_duration = end_time - start_time
 
-        print(f"({epoch_duration:.2f}s)")
+        log(f"({epoch_duration:.2f}s)")
 
-    print()
+    log('')
 
 
-def incremental_learning():
+def incremental_learning(exemplar_selection_method):
     device = get_device()
     model = get_model(device)
     old_model = get_model(device)
 
     for task_nr in range(TOTAL_TASKS_NR):
-        print(f"Task {task_nr + 1}:")
+        log(f"Task {task_nr + 1}:")
 
-        train_data, test_data = get_datasets(device, model, task_nr)
+        train_data, test_data = get_datasets(device, model, task_nr, exemplar_selection_method)
 
         train_data_loader = DataLoader(train_data, batch_size=BATCH_SIZE)
         test_data_loader = DataLoader(test_data, batch_size=BATCH_SIZE)
@@ -439,12 +430,42 @@ def incremental_learning():
         old_model.load_state_dict(model.state_dict())
 
 
-def main():
+def main(exemplar_selection_method):
+    global f, TOTAL_TASKS_NR, MAX_INSTANCES_PER_CLASS, MEMORY_SIZE_PER_CLASS, BATCH_SIZE, EPOCHS, LEARNING_RATE, T, SEED
+
+    if LOG_TO_FILE:
+        f = open(f'{RESULTS_FOLDER_NAME}/{get_current_date_time()}-{exemplar_selection_method.__name__}.txt', 'x')
+
+    log("Hyperparameters:")
+    log('')
+    log(f"Total tasks numbers: {TOTAL_TASKS_NR}")
+    log(f"Max instances per class: {MAX_INSTANCES_PER_CLASS}")
+    log(f"Memory size per class: {MEMORY_SIZE_PER_CLASS}")
+    log(f"Batch size: {BATCH_SIZE}")
+    log(f"Epochs: {EPOCHS}")
+    log(f"Learning rate: {LEARNING_RATE}")
+    log(f"T: {T}")
+    log(f"Seed: {SEED}")
+    log('')
+
     group_datasets_by_tasks(datasets.CIFAR100)
-    incremental_learning()
+    incremental_learning(exemplar_selection_method)
 
-    print('Accuracies per tasks: ', accuracies_per_tasks)
+    log(f"Accuracies per tasks: {accuracies_per_tasks}")
 
+    if LOG_TO_FILE:
+        f.close()
+
+
+exemplar_selection_methods = {
+    'HERDING': select_new_exemplars_by_herding,
+    'KMEANS': select_exemplars_with_kmeans,
+    'MEDIAN': select_exemplars_by_median,
+    'DENSITY': select_exemplars_by_density,
+}
 
 if __name__ == '__main__':
-    main()
+    # main(exemplar_selection_methods['HERDING'])
+    main(exemplar_selection_methods['KMEANS'])
+    # main(exemplar_selection_methods['MEDIAN'])
+    # main(exemplar_selection_methods['DENSITY'])
