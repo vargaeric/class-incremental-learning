@@ -1,5 +1,16 @@
 # Master Thesis Progress Tracking
 
+## Week 8 (04.15 - 04.21)
+
+This week, we reimplemented the iCaRL method from scratch in order to reproduce 
+results that are even closer to those of the original paper. As we can see, the 
+average accuracies per task have increased compared to our first implementation. 
+The following two lists represent the accuracies (using the nearest mean 
+classifier) for the first five tasks in a 10-task run:
+
+Herding: [0.7860, 0.5415, 0.4210, 0.3320, 0.3000]
+K-Means: [0.7850, 0.5760, 0.4537, 0.3623, 0.3266]
+
 ## Week 7 (04.08 - 04.14)
 
 The main contribution to the codebase this week was the creation of a logging 

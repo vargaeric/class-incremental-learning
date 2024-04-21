@@ -10,9 +10,9 @@ from sklearn.cluster import KMeans
 
 TOTAL_TASKS_NR = 5
 MAX_INSTANCES_PER_CLASS = 500
-MEMORY_SIZE_PER_CLASS = 20
+MEMORY_SIZE_PER_CLASS = 0
 BATCH_SIZE = 128
-EPOCHS = 70
+EPOCHS = 10
 LEARNING_RATE = 2.0
 T = 2
 SEED = 42
@@ -465,7 +465,7 @@ exemplar_selection_methods = {
 }
 
 if __name__ == '__main__':
-    # main(exemplar_selection_methods['HERDING'])
-    main(exemplar_selection_methods['KMEANS'])
+    main(exemplar_selection_methods['HERDING'])
+    # main(exemplar_selection_methods['KMEANS'])
     # main(exemplar_selection_methods['MEDIAN'])
     # main(exemplar_selection_methods['DENSITY'])
