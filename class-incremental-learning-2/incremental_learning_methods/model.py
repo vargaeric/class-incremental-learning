@@ -107,8 +107,7 @@ def get_accuracy(model, device, criterion, test_data_loader):
             target = target.to(device)
 
             output = model(feature)
-            predicted_target = torch.argmax(output, dim=1)
-
+            predicted_target = output.max(dim=1).indices
             matches += (predicted_target == original_target).sum().item()
             total += len(feature)
             loss += criterion(output, target).detach().cpu().item()

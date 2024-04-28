@@ -1,5 +1,12 @@
 # Master Thesis Progress Tracking
 
+## Week 9 (04.22 - 04.28)
+
+We have reorganized and refactored the structure of the folders and files, as 
+well as some parts of the code, to make them more readable and structured. Next
+week, we will continue with the refactoring, as our ultimate goal is to make the 
+code as easily understandable as possible.
+
 ## Week 8 (04.15 - 04.21)
 
 This week, we reimplemented the iCaRL method from scratch in order to reproduce 
@@ -9,6 +16,7 @@ The following two lists represent the accuracies (using the nearest mean
 classifier) for the first five tasks in a 10-task run:
 
 Herding: [0.7860, 0.5415, 0.4210, 0.3320, 0.3000]
+
 K-Means: [0.7850, 0.5760, 0.4537, 0.3623, 0.3266]
 
 ## Week 7 (04.08 - 04.14)
