@@ -1,5 +1,14 @@
 # Master Thesis Progress Tracking
 
+## Week 10 (04.29 - 05.05)
+
+This week, we cleaned up all the unused files from the original PyCIL framework, 
+in which we conducted all the preliminary proof of concept experiments. Currently, 
+we have two implementations: the `class-incremental-learning` and 
+`class-incremental-learning-2` folders. Most likely, we will continue with the 
+aforementioned implementation as its implementation and hyperparameters are 
+closer to the original iCaRL paper implementation.
+
 ## Week 9 (04.22 - 04.28)
 
 We have reorganized and refactored the structure of the folders and files, as 
