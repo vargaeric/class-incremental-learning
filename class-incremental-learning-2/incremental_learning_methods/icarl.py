@@ -5,9 +5,8 @@ from torch.optim.lr_scheduler import MultiStepLR
 import numpy as np
 from sklearn.cluster import KMeans
 
-from incremental_learning_methods.icarl_net import make_icarl_net, initialize_icarl_net
-from incremental_learning_methods.model import make_batch_one_hot, train, get_accuracy, inference, get_feature_extraction_layer, get_accuracy_2
-
+from incremental_learning_methods.model import make_batch_one_hot, train, get_accuracy, inference, get_accuracy_2
+from incremental_learning_methods.ResNet34Icarl import ResNet34Icarl
 
 def group_training_data_by_classes(training_data_grouped_by_classes, current_original_train_data):
     # TODO: maybe add only the features
@@ -47,12 +46,7 @@ def select_exemplars_with_kmeans(model, device, dataset, n_clusters, class_means
         exemplars_tensor = torch.stack(exemplars).to(device)
         # features = model(exemplars_tensor, extract_features=True)
 
-        features = get_feature_extraction_layer(
-            model,
-            device,
-            'feature_extractor',
-            exemplars_tensor,
-        )
+        features = model(exemplars_tensor, return_features=True)
 
         normalized_features = [l2_normalization(feature) for feature in features]
         features_np = torch.stack(normalized_features).cpu().detach().numpy()
@@ -68,14 +62,7 @@ def select_exemplars_with_kmeans(model, device, dataset, n_clusters, class_means
             nearest_index = np.argmin(distances)
             selected_exemplars.append(exemplars[nearest_index])
 
-        # Normalization and mean calculation for the selected exemplars
-        # selected_features = model(torch.stack(selected_exemplars).to(device), extract_features=True)
-        selected_features = get_feature_extraction_layer(
-            model,
-            device,
-            'feature_extractor',
-            torch.stack(selected_exemplars).to(device),
-        )
+        selected_features = model(torch.stack(selected_exemplars).to(device), return_features=True)
 
         normalized_selected_features = [l2_normalization(feature) for feature in selected_features]
         class_means[label] = l2_normalization(torch.stack(normalized_selected_features).mean(dim=0))
@@ -100,13 +87,14 @@ def define_class_means(model, device, exemplars_nr_per_class, classes_order, tas
         features = [item[0] for item in training_data_grouped_by_classes[current_task_class]]
         features_tensor = torch.stack(features)
 
-        extracted_features_from_last_layer = get_feature_extraction_layer(
-            model,
-            device,
-            'feature_extractor',
-            features_tensor,
-        )
-        D = extracted_features_from_last_layer.T
+        extracted_features_from_last_layer_2 = model(features_tensor.to(device) , return_features=True).detach().cpu()
+        # print('-------------------')
+        # print('extracted_features_from_last_layer')
+        # print(np.asarray(extracted_features_from_last_layer_2).shape)
+        # print('---------')
+        # print(extracted_features_from_last_layer_2[0])
+        # print('-------------------')
+        D = extracted_features_from_last_layer_2.T
         D = D / torch.norm(D, dim=0)
 
         mu = torch.mean(D, dim=1)
@@ -136,9 +124,7 @@ def icarl(exemplars_nr_per_class, epochs_nr, learning_rate_starting_value, learn
     torch.manual_seed(seed)
 
     classes_nr = len(classes_order)
-    model = make_icarl_net(num_classes=classes_nr)
-
-    model.apply(initialize_icarl_net)
+    model = ResNet34Icarl(classes_nr)
 
     device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
     model = model.to(device)
@@ -207,14 +193,14 @@ def icarl(exemplars_nr_per_class, epochs_nr, learning_rate_starting_value, learn
 
         # TODO: prettify/optimize
         if task_nr == 0:
-            old_model = make_icarl_net(classes_nr)
+            old_model = ResNet34Icarl(classes_nr)
             old_model = old_model.to(device)
 
         old_model.load_state_dict(model.state_dict())
 
         group_training_data_by_classes(training_data_grouped_by_classes, current_original_train_data)
 
-        new_exemplars = define_class_means(model, device, exemplars_nr_per_class, classes_order, tasks_nr, task_nr, current_original_train_data, training_data_grouped_by_classes, class_means, False)
+        new_exemplars = define_class_means(model, device, exemplars_nr_per_class, classes_order, tasks_nr, task_nr, current_original_train_data, training_data_grouped_by_classes, class_means, True)
 
         print(f"New exemplars nr:{len(new_exemplars)}")
 
@@ -222,7 +208,7 @@ def icarl(exemplars_nr_per_class, epochs_nr, learning_rate_starting_value, learn
 
         print('NCM: ', ncm)
 
-        exemplars = new_exemplars
+        exemplars += new_exemplars
 
     print('End!')
 

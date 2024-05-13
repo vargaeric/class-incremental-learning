@@ -1,6 +1,6 @@
 {
     "exemplars_nr_per_class": 20,
-    "epochs_nr": 70,
+    "epochs_nr": 5,
     "learning_rate_starting_value": 2,
     "learning_rate_division_value": 5,
     "learning_rate_milestones": [49, 63],

@@ -1,24 +1,4 @@
 import torch
-from torch.utils.data import TensorDataset, DataLoader
-
-
-# TODO: prettify/optimize
-def extract_features_from_layer(model, layer_name, x):
-    activation = {}
-
-    def get_activation(name):
-        def hook(model_hook, x_hook, out_hook):
-            activation[name] = out_hook.detach().cpu()
-
-        return hook
-
-    model.eval()
-
-    with torch.no_grad():
-        with getattr(model, layer_name).register_forward_hook(get_activation(layer_name)):
-            output = model(x)
-
-    return output, activation[layer_name]
 
 
 def train(model, device, criterion, optimizer, feature, target):
@@ -39,16 +19,15 @@ def train(model, device, criterion, optimizer, feature, target):
 
 # TODO: prettify/optimize
 # TODO: rename feature_extraction_layer
-def test(model, device, criterion, feature_extraction_layer, feature, target):
+def test(model, device, feature):
     model.eval()
 
     with torch.no_grad():
         feature = feature.to(device)
-        target = target.to(device)
-        output, output_features = extract_features_from_layer(model, feature_extraction_layer, feature)
-        loss = criterion(output, target)
+        output = model(feature).detach().cpu()
+        output_features = model(feature, return_features=True).detach().cpu()
 
-    return loss.detach().cpu().item(), output, output_features
+    return output, output_features
 
 
 # TODO: prettify/optimize
@@ -60,23 +39,6 @@ def inference(model, device, feature):
         output = model(feature)
 
     return output
-
-
-# TODO: prettify/optimize
-def get_feature_extraction_layer(model, device, feature_extraction_layer, x, **kwargs):
-    output_features = []
-
-    x_dataset = TensorDataset(x)
-    x_dataset_loader = DataLoader(x_dataset, **kwargs)
-
-    model.eval()
-    with torch.no_grad():
-        for (patterns,) in x_dataset_loader:
-            if device is not None:
-                patterns = patterns.to(device)
-            output_features.append(extract_features_from_layer(model, feature_extraction_layer, patterns)[1])
-
-    return torch.cat(output_features)
 
 
 # TODO: prettify/optimize
@@ -121,16 +83,13 @@ def get_accuracy_2(model, device, criterion, test_loader, feature_extraction_lay
 
     with torch.no_grad():
         for feature, labels in test_loader:
-            target = make_batch_one_hot(labels, 100)
-
             feature = feature.to(device)
-            target = target.to(device)
 
-            _, pred, pred_inter = test(model, device, criterion, feature_extraction_layer, feature, target)
+            pred, pred_inter = test(model, device, feature)
 
             pred_inter = (pred_inter.T / torch.norm(pred_inter.T, dim=0)).T
 
-            tensor = torch.zeros(64, 100)
+            tensor = torch.zeros(512, 100)
 
             for key, value in class_means.items():
                 tensor[:, key] = torch.tensor(value)

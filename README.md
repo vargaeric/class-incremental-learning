@@ -1,5 +1,13 @@
 # Master Thesis Progress Tracking
 
+## Week 11 (05.06 - 05.12)
+
+We have replaced the ResNet model with our own implementation. Our implementation 
+not only simplifies the code but also exponentially improves the inference time 
+when extracting features to determine the mean of the features for each class, 
+subsequently aiding in the selection of exemplars that best represent the class
+(define_class_means).
+
 ## Week 10 (04.29 - 05.05)
 
 This week, we cleaned up all the unused files from the original PyCIL framework, 
