@@ -1,5 +1,20 @@
 # Master Thesis Progress Tracking
 
+## Week 12 (05.13 - 05.19)
+
+This week, we have refactored/rearranged the code in a manner that almost all the 
+functions are in their own files. This makes the code easier to read and more 
+manageable. Regarding the results, as we have changed the model from ResNet34 
+to ResNet32, they have improved significantly:
+
+original = [0.5570, 0.4213, 0.3248, 0.3000, 0.3112, 0.2744, 0.2578, 0.2491, 0.2328]
+
+kmeans = [0.6060, 0.4640, 0.3855, 0.3540, 0.3510, 0.3234, 0.3014, 0.2887, 0.2650]
+
+median = [0.5815, 0.4140, 0.3245, 0.2962, 0.3037, 0.2723, 0.2553, 0.2583, 0.2348]
+
+density = [0.5745, 0.4170, 0.3223, 0.2976, 0.2958, 0.2617, 0.2491, 0.2518, 0.2387]
+
 ## Week 11 (05.06 - 05.12)
 
 We have replaced the ResNet model with our own implementation. Our implementation 
@@ -46,7 +61,6 @@ order to reproduce the results of the approach. These settings are actually the
 final results from last week's attempts (Week 6). Furthermore, we have corrected 
 some of the errors and warnings that appeared during the runtime of the exemplar 
 selection using the K-Means clustering algorithm.
-
 ## Week 6 (04.01 - 04.07)
 
 This week, there were no significant changes made to the code because we focused 

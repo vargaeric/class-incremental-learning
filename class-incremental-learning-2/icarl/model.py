@@ -89,7 +89,7 @@ def get_accuracy_2(model, device, criterion, test_loader, feature_extraction_lay
 
             pred_inter = (pred_inter.T / torch.norm(pred_inter.T, dim=0)).T
 
-            tensor = torch.zeros(512, 100)
+            tensor = torch.zeros(64, 100)
 
             for key, value in class_means.items():
                 tensor[:, key] = torch.tensor(value)
