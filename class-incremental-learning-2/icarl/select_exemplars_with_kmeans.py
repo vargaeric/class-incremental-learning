@@ -1,52 +1,44 @@
-import torch
-import numpy as np
+from torch import no_grad, stack, float, norm, tensor, argmin
+from torch.nn.functional import normalize
 from sklearn.cluster import KMeans
+from icarl.config import exemplars_nr_per_class, seed
 
-def select_exemplars_with_kmeans(model, device, dataset, n_clusters, class_means):
-    def l2_normalization(vector):
-        return torch.nn.functional.normalize(vector, p=2, dim=0)
-
+def select_exemplars_with_kmeans(model, device, current_original_train_data, class_means_or_medians):
     new_memory_dataset = []
     exemplars_per_label = {}
 
-    # Step 1: Extract features for the dataset
+    for features, target in current_original_train_data:
+        if target not in exemplars_per_label:
+            exemplars_per_label[target] = [features]
+        else:
+            exemplars_per_label[target].append(features)
+
     model.eval()
 
-    with torch.no_grad():
-        for data, label in dataset:
-            if label not in exemplars_per_label:
-                exemplars_per_label[label] = [data]
-            else:
-                exemplars_per_label[label].append(data)
+    with no_grad():
+        for target, exemplars in exemplars_per_label.items():
+            exemplars_tensor = stack(exemplars).to(device)
+            features = model(exemplars_tensor, return_features=True)
+            normalized_features = [normalize(feature, dim=0) for feature in features]
+            features_np = stack(normalized_features).cpu().detach().numpy()
+            # TODO: set random_state to seed from config
+            kmeans = KMeans(n_clusters=exemplars_nr_per_class, random_state=42, n_init=50).fit(features_np)
+            centers = kmeans.cluster_centers_
+            centers_tensor = tensor(centers, dtype=float)
+            selected_exemplars = []
 
-    # Step 2 and 3: Apply K-Means on normalized features
-    for label, exemplars in exemplars_per_label.items():
-        exemplars_tensor = torch.stack(exemplars).to(device)
-        # features = model(exemplars_tensor, extract_features=True)
+            for center in centers_tensor:
+                center = center.unsqueeze(0).repeat(len(features_np), 1)
+                distances = norm(tensor(features_np) - center, dim=1)
+                nearest_index = argmin(distances).item()
+                selected_exemplars.append(exemplars[nearest_index])
 
-        features = model(exemplars_tensor, return_features=True)
+            selected_features = model(stack(selected_exemplars).to(device), return_features=True)
+            normalized_selected_features = [normalize(feature, dim=0) for feature in selected_features]
+            class_means_or_medians[target] = normalize(stack(normalized_selected_features).mean(dim=0), dim=0)
 
-        normalized_features = [l2_normalization(feature) for feature in features]
-        features_np = torch.stack(normalized_features).cpu().detach().numpy()
-
-        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10).fit(features_np)
-        centers = kmeans.cluster_centers_
-
-        # Step 4: Select nearest exemplars to cluster centers
-        selected_exemplars = []
-
-        for center in centers:
-            distances = np.linalg.norm(features_np - center, axis=1)
-            nearest_index = np.argmin(distances)
-            selected_exemplars.append(exemplars[nearest_index])
-
-        selected_features = model(torch.stack(selected_exemplars).to(device), return_features=True)
-
-        normalized_selected_features = [l2_normalization(feature) for feature in selected_features]
-        class_means[label] = l2_normalization(torch.stack(normalized_selected_features).mean(dim=0))
-
-        # Update memory dataset
-        for data in selected_exemplars:
-            new_memory_dataset.append((data, label))
+            # Update memory dataset
+            for features in selected_exemplars:
+                new_memory_dataset.append((features, target))
 
     return new_memory_dataset

@@ -1,8 +1,8 @@
-# Incremental learning methods
-ICARL = 'iCaRL'
+# Incremental learning approaches
+ICARL_APPROACH = 'iCaRL'
 
 # Datasets
-CIFAR100 = 'CIFAR100'
+CIFAR100_DATASET = 'CIFAR100'
 
 # Exemplars selection methods
 ORIGINAL_SELECTION = 'Original'

@@ -1,11 +1,11 @@
-import torchvision.transforms as transforms
+from torchvision.transforms import ToTensor
 
 
 def assign_data_to_tasks(data, classes_order, tasks_nr):
     data_grouped_by_tasks = [[] for _ in range(tasks_nr)]
 
-    total_classes_nr = len(classes_order)
-    classes_per_task = total_classes_nr // tasks_nr
+    classes_nr = len(classes_order)
+    classes_per_task = classes_nr // tasks_nr
 
     for (feature, target) in data:
         target_index_in_class_order = classes_order.index(target)
@@ -27,14 +27,14 @@ def group_data_by_tasks(data, tasks_nr, classes_order):
         root=DOWNLOAD_FOLDER_FOR_DATA,
         train=True,
         download=True,
-        transform=transforms.ToTensor()
+        transform=ToTensor()
     )
 
     test_data = data(
         root=DOWNLOAD_FOLDER_FOR_DATA,
         train=False,
         download=True,
-        transform=transforms.ToTensor()
+        transform=ToTensor()
     )
 
     print('Grouping training data by tasks...')

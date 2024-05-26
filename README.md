@@ -1,5 +1,13 @@
 # Master Thesis Progress Tracking
 
+## Week 13 (05.20 - 05.26)
+
+We have continued with the refactoring of the code. In addition to enhancing the 
+readability of the code, we have also managed to make some minor optimizations. We 
+will continue to refactor the remaining two functions: `select_exemplars_by_density`
+and `select_exemplars_with_kmeans` (we have already started the latter but need to 
+finish it). Furthermore, we will try to rewrite/optimize the `ResNet32` class.
+
 ## Week 12 (05.13 - 05.19)
 
 This week, we have refactored/rearranged the code in a manner that almost all the 

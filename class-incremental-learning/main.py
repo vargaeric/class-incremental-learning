@@ -448,7 +448,7 @@ def main(exemplar_selection_method):
     log(f"Seed: {SEED}")
     log('')
 
-    group_datasets_by_tasks(datasets.CIFAR100)
+    group_datasets_by_tasks(datasets.CIFAR100_DATASET)
     incremental_learning(exemplar_selection_method)
 
     log(f"Accuracies per tasks: {accuracies_per_tasks}")
