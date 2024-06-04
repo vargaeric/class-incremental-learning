@@ -1,44 +1,38 @@
 from torch import no_grad, stack, float, norm, tensor, argmin
 from torch.nn.functional import normalize
 from sklearn.cluster import KMeans
-from icarl.config import exemplars_nr_per_class, seed
+from icarl.config import exemplars_nr_per_target, seed
 
-def select_exemplars_with_kmeans(model, device, current_original_train_data, class_means_or_medians):
-    new_memory_dataset = []
-    exemplars_per_label = {}
-
-    for features, target in current_original_train_data:
-        if target not in exemplars_per_label:
-            exemplars_per_label[target] = [features]
-        else:
-            exemplars_per_label[target].append(features)
+def select_exemplars_with_kmeans(model, device, train_data_grouped_by_targets, target_means_or_medians):
+    selected_exemplars = []
 
     model.eval()
 
     with no_grad():
-        for target, exemplars in exemplars_per_label.items():
-            exemplars_tensor = stack(exemplars).to(device)
-            features = model(exemplars_tensor, return_features=True)
+        for target, target_exemplars in train_data_grouped_by_targets.items():
+            target_exemplars_tensor = stack(target_exemplars).to(device)
+            features = model(target_exemplars_tensor, return_features=True)
             normalized_features = [normalize(feature, dim=0) for feature in features]
-            features_np = stack(normalized_features).cpu().detach().numpy()
+            normalized_features = stack(normalized_features).cpu().detach()
             # TODO: set random_state to seed from config
-            kmeans = KMeans(n_clusters=exemplars_nr_per_class, random_state=42, n_init=50).fit(features_np)
+            kmeans = KMeans(n_clusters=exemplars_nr_per_target, random_state=42, n_init=50).fit(normalized_features)
             centers = kmeans.cluster_centers_
             centers_tensor = tensor(centers, dtype=float)
-            selected_exemplars = []
+            selected_exemplars_okkkkk = []
 
             for center in centers_tensor:
-                center = center.unsqueeze(0).repeat(len(features_np), 1)
-                distances = norm(tensor(features_np) - center, dim=1)
+                center = center.unsqueeze(0).repeat(len(normalized_features), 1)
+                distances = norm(normalized_features  - center, dim=1)
                 nearest_index = argmin(distances).item()
-                selected_exemplars.append(exemplars[nearest_index])
 
-            selected_features = model(stack(selected_exemplars).to(device), return_features=True)
+                selected_exemplars_okkkkk.append(target_exemplars[nearest_index])
+
+            selected_features = model(stack(selected_exemplars_okkkkk).to(device), return_features=True)
             normalized_selected_features = [normalize(feature, dim=0) for feature in selected_features]
-            class_means_or_medians[target] = normalize(stack(normalized_selected_features).mean(dim=0), dim=0)
+            target_means_or_medians[target] = normalize(stack(normalized_selected_features).mean(dim=0), dim=0)
 
             # Update memory dataset
-            for features in selected_exemplars:
-                new_memory_dataset.append((features, target))
+            for features in selected_exemplars_okkkkk:
+                selected_exemplars.append((features, target))
 
-    return new_memory_dataset
+    return selected_exemplars

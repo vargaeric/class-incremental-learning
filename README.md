@@ -1,5 +1,14 @@
 # Master Thesis Progress Tracking
 
+## Week 14 (05.27 - 06.02)
+
+This week, we found several possible improvements, especially in the different 
+selection criteria parts of the code. We were able to achieve this while still 
+continuing with the refactoring process. Next week, we will focus our coding efforts
+primarily on the `select_exemplars_by_density` and `select_exemplars_with_kmeans` 
+functions. We'll leave the `ResNet32` class for last, tackling it only if time
+permits.
+
 ## Week 13 (05.20 - 05.26)
 
 We have continued with the refactoring of the code. In addition to enhancing the 

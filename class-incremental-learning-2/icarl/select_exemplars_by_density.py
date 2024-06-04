@@ -1,19 +1,12 @@
 import torch
 
-def select_exemplars_by_density(model, device, dataset, n_exemplars):
+def select_exemplars_by_density(model, device, train_data_grouped_by_targets, n_exemplars):
     new_memory_dataset = []
-    exemplars_per_label = {}
 
     model.eval()
 
     with torch.no_grad():
-        for data, label in dataset:
-            if label not in exemplars_per_label:
-                exemplars_per_label[label] = [data]
-            else:
-                exemplars_per_label[label].append(data)
-
-        for label, exemplars in exemplars_per_label.items():
+        for label, exemplars in train_data_grouped_by_targets.items():
             exemplars_tensor = torch.stack(exemplars).to(device)
             features = model(exemplars_tensor, return_features=True)
 

@@ -1,19 +1,19 @@
 from torch.optim import SGD, lr_scheduler
 from torch.utils.data import DataLoader
-from constants import ORIGINAL_SELECTION, MEDIAN_SELECTION, K_MEANS_SELECTION, DENSITY_SELECTION
+from constants import ORIGINAL_SELECTION, MEDIAN_SELECTION
 from .config import (
     epochs_nr, learning_rate_starting_value, learning_rate_milestones, batch_size, weight_decay, momentum
 )
 from .ResNet32 import ResNet32
 from .train_one_epoch import train_one_epoch
-from .group_training_data_by_classes import group_training_data_by_classes
-from .set_class_means_or_medians_and_select_exemplars import set_class_means_or_medians_and_select_exemplars
-from .get_mean_of_exemplars_classifier_score import get_mean_of_exemplars_classifier_score
+from .group_training_data_by_targets import group_training_data_by_targets
+from .set_target_means_or_medians_and_select_exemplars import set_target_means_or_medians_and_select_exemplars
+from .get_mean_or_median_of_exemplars_classifier_score import get_mean_or_median_of_exemplars_classifier_score
 
 
-def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_nr, classes_nr, gamma,
+def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_nr, targets_nr, gamma,
                                         train_data_grouped_by_tasks, test_data_grouped_by_tasks, current_test_data,
-                                        exemplars, train_data_grouped_by_classes, class_means_or_medians,
+                                        exemplars, train_data_grouped_by_targets, target_means_or_medians,
                                         selection_method):
     current_original_train_data = train_data_grouped_by_tasks[task_nr]
     current_train_data = train_data_grouped_by_tasks[task_nr]
@@ -33,24 +33,28 @@ def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_
 
     for epoch_nr in range(epochs_nr):
         train_one_epoch(model, old_model, device, train_data_loader, loss_fn, optimizer, scheduler, test_data_loader,
-                  epoch_nr, task_nr, classes_nr)
+                        epoch_nr, task_nr, targets_nr)
 
     if task_nr == 0:
-        old_model = ResNet32(classes_nr)
+        old_model = ResNet32(targets_nr)
         old_model = old_model.to(device)
 
     old_model_parameters = model.state_dict()
 
     old_model.load_state_dict(old_model_parameters)
-    group_training_data_by_classes(train_data_grouped_by_classes, current_original_train_data)
+    train_data_grouped_by_targets = {}
+    group_training_data_by_targets(train_data_grouped_by_targets, current_original_train_data)
 
-    new_exemplars = set_class_means_or_medians_and_select_exemplars(model, device, task_nr, current_original_train_data,
-                                                                    train_data_grouped_by_classes,
-                                                                    class_means_or_medians, selection_method)
-    mean_of_exemplars_classifier_score = get_mean_of_exemplars_classifier_score(model, device, test_data_loader,
-                                                                                class_means_or_medians, classes_nr)
+    new_exemplars = set_target_means_or_medians_and_select_exemplars(model, device, task_nr,
+                                                                     train_data_grouped_by_targets,
+                                                                     target_means_or_medians, selection_method)
+    mean_of_exemplars_classifier_score = get_mean_or_median_of_exemplars_classifier_score(model, device,
+                                                                                          test_data_loader,
+                                                                                          target_means_or_medians,
+                                                                                          targets_nr)
 
-    print('Mean-of-exemplars classifier\'s accuracy: ', mean_of_exemplars_classifier_score)
+    classifier_type = 'Median' if selection_method == MEDIAN_SELECTION else 'Mean'
+    print(f"{classifier_type}-of-exemplars classifier's accuracy: ", mean_of_exemplars_classifier_score)
 
     if selection_method == ORIGINAL_SELECTION or selection_method == MEDIAN_SELECTION:
         exemplars += new_exemplars
