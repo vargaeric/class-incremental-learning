@@ -1,11 +1,12 @@
 from torch import no_grad, float, mean, tensor, float
 from torch.nn.functional import one_hot
 
-def get_accuracy_and_loss(model, device, loss_fn, test_data_loader, targets_nr):
+
+def get_accuracy_and_val_loss(model, device, loss_fn, test_data_loader, targets_nr):
     model.eval()
 
     scores = []
-    loss = 0
+    val_loss = 0
 
     with no_grad():
         for features_in_batches, targets_in_batches in test_data_loader:
@@ -17,6 +18,6 @@ def get_accuracy_and_loss(model, device, loss_fn, test_data_loader, targets_nr):
             predicted_target = predicted_targets_in_batches.max(dim=1).indices
             scores += (predicted_target == targets_in_batches)
             targets_in_batches = one_hot(targets_in_batches, targets_nr).to(dtype=float)
-            loss += loss_fn(predicted_targets_in_batches, targets_in_batches).detach().cpu().item()
+            val_loss += loss_fn(predicted_targets_in_batches, targets_in_batches).detach().cpu().item()
 
-    return mean(tensor(scores, dtype=float)), loss
+    return mean(tensor(scores, dtype=float)).item(), val_loss

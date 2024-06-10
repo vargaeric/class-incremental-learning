@@ -3,14 +3,14 @@ from torch.nn.functional import one_hot
 from .config import tasks_nr, targets_order
 from .inference import inference
 from .train import train
-from .get_accuracy_and_loss import get_accuracy_and_loss
+from .get_accuracy_and_val_loss import get_accuracy_and_val_loss
 
 
 def train_one_epoch(model, old_model, device, train_data_loader, loss_fn, optimizer, scheduler, test_data_loader,
-                    epoch_nr, task_nr, targets_nr):
+                    epoch_nr, task_nr, targets_nr, log):
     train_loss = 0
 
-    print(f"Epoch {epoch_nr}: ", end='')
+    log(f"Epoch {epoch_nr + 1}: ", end='')
 
     for features_in_batches, targets_in_batches in train_data_loader:
         targets_in_batches = one_hot(targets_in_batches, targets_nr).to(dtype=float)
@@ -24,8 +24,9 @@ def train_one_epoch(model, old_model, device, train_data_loader, loss_fn, optimi
 
         train_loss += train(model, device, loss_fn, optimizer, features_in_batches, targets_in_batches)
 
-    accuracy, loss = get_accuracy_and_loss(model, device, loss_fn, test_data_loader, targets_nr)
+    accuracy, val_loss = get_accuracy_and_val_loss(model, device, loss_fn, test_data_loader, targets_nr)
 
-    print(f'train loss - {train_loss} | val loss - {loss} | accuracy - {accuracy}')
+    log(f'training loss - {round(train_loss, 5)} | validation loss - {round(val_loss, 5)} | accuracy - '
+        f'{round(accuracy, 5)}')
 
     scheduler.step()

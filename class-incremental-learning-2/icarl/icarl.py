@@ -5,7 +5,7 @@ from .ResNet32 import ResNet32
 from .train_one_incremental_learning_step import train_one_incremental_learning_step
 
 
-def icarl(data_grouped_by_tasks, selection_method):
+def icarl(data_grouped_by_tasks, selection_method, log):
     manual_seed(seed)
 
     device = imported_device('mps' if backends.mps.is_available() else 'cpu')
@@ -15,16 +15,20 @@ def icarl(data_grouped_by_tasks, selection_method):
     old_model = None
     loss_fn = BCELoss()
     gamma = 1.0 / learning_rate_division_value
-
     train_data_grouped_by_tasks, test_data_grouped_by_tasks = data_grouped_by_tasks
     current_test_data = []
     exemplars = []
-    train_data_grouped_by_targets = {}
     target_means_or_medians = {}
+    accuracy_scores = []
 
     for task_nr in range(tasks_nr):
+        current_train_data = train_data_grouped_by_tasks[task_nr] + exemplars
+        current_test_data += test_data_grouped_by_tasks[task_nr]
         old_model, exemplars = train_one_incremental_learning_step(model, old_model, device, loss_fn, task_nr,
-                                                                   targets_nr, gamma, train_data_grouped_by_tasks,
-                                                                   test_data_grouped_by_tasks, current_test_data,
-                                                                   exemplars, train_data_grouped_by_targets,
-                                                                   target_means_or_medians, selection_method)
+                                                                   targets_nr, gamma, current_train_data,
+                                                                   current_test_data, exemplars,
+                                                                   target_means_or_medians, selection_method,
+                                                                   accuracy_scores, log)
+
+    log()
+    log(f"Accuracy scores: {accuracy_scores}")

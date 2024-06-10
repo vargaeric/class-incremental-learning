@@ -1,4 +1,6 @@
 from argparse import ArgumentParser
+from os import makedirs, path
+from functools import partial
 from torchvision.datasets import CIFAR100
 from constants import (
     ICARL_APPROACH, CIFAR100_DATASET, ORIGINAL_SELECTION, MEDIAN_SELECTION, K_MEANS_SELECTION, DENSITY_SELECTION
@@ -8,24 +10,35 @@ from icarl.config import (
     learning_rate_milestones, batch_size, weight_decay, momentum, tasks_nr, targets_order, seed
 )
 from icarl.icarl import icarl
-from data_handler.group_data_by_tasks import group_data_by_tasks
+from utils.get_current_date_and_time import get_current_date_and_time
+from utils.print_and_log import print_and_log
+from data_handlers.group_data_by_tasks import group_data_by_tasks
 
 
 def main(approach, dataset, selection):
-    print(f"Training {approach} with the following settings:")
-    print(f" - Selection criteria: {selection}")
-    print(f" - Dataset: {dataset}")
-    print(f" - Number of exemplars per target: {exemplars_nr_per_target}")
-    print(f" - Number of epochs: {epochs_nr}")
-    print(f" - Starting learning rate: {learning_rate_starting_value}")
-    print(f" - Learning rate division: {learning_rate_division_value}")
-    print(f" - Milestones for learning rate adjustment: {learning_rate_milestones}")
-    print(f" - Size of the batches: {batch_size}")
-    print(f" - Weight decay: {weight_decay}")
-    print(f" - Momentum: {momentum}")
-    print(f" - Number of tasks: {tasks_nr}")
-    print(f" - Targets order: {targets_order}")
-    print(f" - Random seed: {seed}")
+    results_folder_name = 'results'
+    file_path = f'{results_folder_name}/{dataset}/{seed}/{tasks_nr}/{selection}-{get_current_date_and_time()}.txt'
+
+    makedirs(path.dirname(file_path), exist_ok=True)
+
+    file = open(file_path, 'x')
+    log = partial(print_and_log, file)
+
+    log(f"Training {approach} with the following settings:")
+    log(f" - Dataset: {dataset}")
+    log(f" - Selection criterion: {selection}")
+    log(f" - Number of exemplars per target: {exemplars_nr_per_target}")
+    log(f" - Number of epochs: {epochs_nr}")
+    log(f" - Starting learning rate: {learning_rate_starting_value}")
+    log(f" - Learning rate division: {learning_rate_division_value}")
+    log(f" - Milestones for learning rate adjustment: {learning_rate_milestones}")
+    log(f" - Size of the batches: {batch_size}")
+    log(f" - Weight decay: {weight_decay}")
+    log(f" - Momentum: {momentum}")
+    log(f" - Number of tasks: {tasks_nr}")
+    log(f" - Targets order: {targets_order}")
+    log(f" - Random seed: {seed}")
+    log()
 
     data = None
 
@@ -35,19 +48,23 @@ def main(approach, dataset, selection):
     data_grouped_by_tasks = group_data_by_tasks(data, tasks_nr, targets_order)
 
     if approach == ICARL_APPROACH:
-        icarl(data_grouped_by_tasks, selection)
+        icarl(data_grouped_by_tasks, selection, log)
+
+    file.close()
 
 
-# To start the code run "python3 ./main.py --approach=iCaRL --dataset=CIFAR100 --selection=Original" in the terminal!
+# To start the code run "python3.8 ./main.py --approach=iCaRL --dataset=CIFAR100 --selection=Original" in the terminal!
 if __name__ == "__main__":
     parser = ArgumentParser(
-        description="Do incremental learning with the specified approach, dataset and selection criterion."
+        description="Do class-incremental learning with the specified approach, dataset and selection criterion."
     )
-    parser.add_argument('--approach', type=str, help='Incremental learning approach', required=True,
-                        choices=[ICARL_APPROACH])
-    parser.add_argument('--dataset', type=str, help='Identifier of the dataset', required=True,
+
+    parser.add_argument('--approach', type=str, help="Identifier of the class-incremental learning approach",
+                        required=True, choices=[ICARL_APPROACH])
+    parser.add_argument('--dataset', type=str, help="Identifier of the dataset", required=True,
                         choices=[CIFAR100_DATASET])
-    parser.add_argument('--selection', type=str, help='Identifier of the exemplar selection method', required=True,
+    parser.add_argument('--selection', type=str, help="Identifier of the exemplar selection criterion method",
+                        required=True,
                         choices=[ORIGINAL_SELECTION, MEDIAN_SELECTION, K_MEANS_SELECTION, DENSITY_SELECTION])
 
     args = parser.parse_args()

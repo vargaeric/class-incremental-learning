@@ -1,5 +1,13 @@
 # Master Thesis Progress Tracking
 
+## Week 15 (06.03 - 06.09)
+
+This week, we have finalized the refactoring of the code. Furthermore, we have 
+added a `requirements.txt` file, which helps make the code more reproducible by 
+specifying the exact versions of the packages we used. Lastly, we have created a 
+logging system (different from simple printing in the terminal). This is a key 
+part to ensure our results can be tracked and compared later on.
+
 ## Week 14 (05.27 - 06.02)
 
 This week, we found several possible improvements, especially in the different 

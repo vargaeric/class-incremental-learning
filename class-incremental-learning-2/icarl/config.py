@@ -1,5 +1,5 @@
 exemplars_nr_per_target = 20
-epochs_nr = 3
+epochs_nr = 70
 learning_rate_starting_value = 2
 learning_rate_division_value = 5
 learning_rate_milestones = [49, 63]
@@ -14,4 +14,4 @@ targets_order = [
     38, 63, 33, 74, 27, 22, 36, 3, 16, 21, 60, 19, 70, 90, 89, 43, 5, 42, 65, 76,
     40, 30, 23, 85, 2, 95, 56, 48, 71, 64, 98, 13, 99, 7, 34, 55, 54, 26, 35, 39
 ]
-seed = 1993
+seed = 42

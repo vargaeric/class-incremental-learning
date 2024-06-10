@@ -1,7 +1,7 @@
 from torch import stack, mean, median, mv, topk
 from torch.nn.functional import normalize
 from constants import MEDIAN_SELECTION, DENSITY_SELECTION
-from icarl.config import exemplars_nr_per_target, tasks_nr, targets_order
+from icarl.config import tasks_nr, targets_order
 from .select_exemplars_by_density import select_exemplars_by_density
 from .select_exemplars_by_target_mean_or_median import select_exemplars_by_target_mean_or_median
 
@@ -25,8 +25,7 @@ def set_target_means_or_medians(model, device, task_nr, train_data_grouped_by_ta
         target_means_or_medians[current_task_target] = returned_features_median_or_mean
 
         if selection_method == DENSITY_SELECTION:
-            selected_exemplars = select_exemplars_by_density(model, device, train_data_grouped_by_targets,
-                                                             exemplars_nr_per_target)
+            selected_exemplars = select_exemplars_by_density(model, device, train_data_grouped_by_targets)
         else:
             selected_exemplars += select_exemplars_by_target_mean_or_median(
                 returned_features_transposed_normalized, returned_features_median_or_mean,

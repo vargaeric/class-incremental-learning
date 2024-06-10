@@ -12,17 +12,12 @@ from .get_mean_or_median_of_exemplars_classifier_score import get_mean_or_median
 
 
 def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_nr, targets_nr, gamma,
-                                        train_data_grouped_by_tasks, test_data_grouped_by_tasks, current_test_data,
-                                        exemplars, train_data_grouped_by_targets, target_means_or_medians,
-                                        selection_method):
-    current_original_train_data = train_data_grouped_by_tasks[task_nr]
-    current_train_data = train_data_grouped_by_tasks[task_nr]
-    current_train_data += exemplars
-    current_test_data += test_data_grouped_by_tasks[task_nr]
-
-    print(f"Task {task_nr}:")
-    print(f"Current train data length: {len(current_train_data)}")
-    print(f"Current test data length: {len(current_test_data)}")
+                                        current_train_data, current_test_data, exemplars, target_means_or_medians,
+                                        selection_method, accuracy_scores, log):
+    log()
+    log(f"Task {task_nr + 1}:")
+    log(f"Current train data length: {len(current_train_data)}")
+    log(f"Current test data length: {len(current_test_data)}")
 
     train_data_loader = DataLoader(current_train_data, batch_size=batch_size, shuffle=True)
     test_data_loader = DataLoader(current_test_data, batch_size=batch_size, shuffle=True)
@@ -33,7 +28,7 @@ def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_
 
     for epoch_nr in range(epochs_nr):
         train_one_epoch(model, old_model, device, train_data_loader, loss_fn, optimizer, scheduler, test_data_loader,
-                        epoch_nr, task_nr, targets_nr)
+                        epoch_nr, task_nr, targets_nr, log)
 
     if task_nr == 0:
         old_model = ResNet32(targets_nr)
@@ -42,19 +37,22 @@ def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_
     old_model_parameters = model.state_dict()
 
     old_model.load_state_dict(old_model_parameters)
+
     train_data_grouped_by_targets = {}
-    group_training_data_by_targets(train_data_grouped_by_targets, current_original_train_data)
+
+    group_training_data_by_targets(train_data_grouped_by_targets, current_train_data)
 
     new_exemplars = set_target_means_or_medians_and_select_exemplars(model, device, task_nr,
                                                                      train_data_grouped_by_targets,
                                                                      target_means_or_medians, selection_method)
-    mean_of_exemplars_classifier_score = get_mean_or_median_of_exemplars_classifier_score(model, device,
-                                                                                          test_data_loader,
-                                                                                          target_means_or_medians,
-                                                                                          targets_nr)
-
+    mean_or_median_of_exemplars_classifier_score = get_mean_or_median_of_exemplars_classifier_score(
+        model, device, test_data_loader, target_means_or_medians, targets_nr
+    )
+    mean_or_median_of_exemplars_classifier_score_rounded = round(mean_or_median_of_exemplars_classifier_score, 5)
     classifier_type = 'Median' if selection_method == MEDIAN_SELECTION else 'Mean'
-    print(f"{classifier_type}-of-exemplars classifier's accuracy: ", mean_of_exemplars_classifier_score)
+
+    log(f"{classifier_type}-of-exemplars classifier's accuracy: {mean_or_median_of_exemplars_classifier_score_rounded}")
+    accuracy_scores.append(mean_or_median_of_exemplars_classifier_score_rounded)
 
     if selection_method == ORIGINAL_SELECTION or selection_method == MEDIAN_SELECTION:
         exemplars += new_exemplars

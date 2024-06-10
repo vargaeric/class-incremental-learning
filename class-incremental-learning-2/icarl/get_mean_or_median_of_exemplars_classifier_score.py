@@ -1,6 +1,5 @@
 from torch import zeros, no_grad, norm, cdist, nn, argmax, mean, tensor, float
 from torch.nn.functional import normalize
-from .config import batch_size
 from .inference import inference
 
 
@@ -35,4 +34,4 @@ def get_mean_or_median_of_exemplars_classifier_score(model, device, test_data_lo
                     argmax(distances_between_target_means_or_medians_and_returned_features) == targets
                 )
 
-    return mean(tensor(mean_or_median_of_exemplars_classifier_scores, dtype=float))
+    return mean(tensor(mean_or_median_of_exemplars_classifier_scores, dtype=float)).detach().item()

@@ -16,13 +16,7 @@ def group_data_by_tasks(data, tasks_nr, targets_order):
         download=True,
         transform=ToTensor()
     )
-
-    print('Grouping training data by tasks...')
-
     train_data_grouped_by_tasks = assign_data_to_tasks(train_data, targets_order, tasks_nr)
-
-    print('Grouping testing data by tasks...')
-
     test_data_grouped_by_tasks = assign_data_to_tasks(test_data, targets_order, tasks_nr)
 
     return train_data_grouped_by_tasks, test_data_grouped_by_tasks
