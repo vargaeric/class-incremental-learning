@@ -1,7 +1,7 @@
 from torch import manual_seed, device as imported_device, backends
 from torch.nn import BCELoss
 from .config import learning_rate_division_value, tasks_nr, targets_order, seed
-from .ResNet32 import ResNet32
+from .ResNet32iCaRL import ResNet32iCaRL
 from .train_one_incremental_learning_step import train_one_incremental_learning_step
 
 
@@ -10,7 +10,7 @@ def icarl(data_grouped_by_tasks, selection_method, log):
 
     device = imported_device('mps' if backends.mps.is_available() else 'cpu')
     targets_nr = len(targets_order)
-    model = ResNet32(targets_nr)
+    model = ResNet32iCaRL(targets_nr)
     model = model.to(device)
     old_model = None
     loss_fn = BCELoss()

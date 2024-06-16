@@ -1,5 +1,14 @@
 # Master Thesis Progress Tracking
 
+## Week 16 (06.10 - 06.16)
+
+We have partially modified the code in the `ResNet32` file, now named
+`ResNet32iCaRL`. We simplified the code by using functions from the original 
+PyTorch package and made some small changes to how the layers are defined in the 
+architecture of the neural network (without affecting its functionality). 
+Additionally, several experiments were run to test our exemplar selection methods 
+with 5 and 20 tasks.
+
 ## Week 15 (06.03 - 06.09)
 
 This week, we have finalized the refactoring of the code. Furthermore, we have 

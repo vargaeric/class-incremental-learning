@@ -4,7 +4,7 @@ from constants import ORIGINAL_SELECTION, MEDIAN_SELECTION
 from .config import (
     epochs_nr, learning_rate_starting_value, learning_rate_milestones, batch_size, weight_decay, momentum
 )
-from .ResNet32 import ResNet32
+from .ResNet32iCaRL import ResNet32iCaRL
 from .train_one_epoch import train_one_epoch
 from .group_training_data_by_targets import group_training_data_by_targets
 from .set_target_means_or_medians_and_select_exemplars import set_target_means_or_medians_and_select_exemplars
@@ -31,7 +31,7 @@ def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_
                         epoch_nr, task_nr, targets_nr, log)
 
     if task_nr == 0:
-        old_model = ResNet32(targets_nr)
+        old_model = ResNet32iCaRL(targets_nr)
         old_model = old_model.to(device)
 
     old_model_parameters = model.state_dict()
