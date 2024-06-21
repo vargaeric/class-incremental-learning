@@ -1,5 +1,14 @@
 # Master Thesis Progress Tracking
 
+## Week 17 (06.17 - 06.23)
+
+We have made several modifications this week: adjusted the code to handle various 
+datasets such as MNIST, FashionMNIST and Food-101, not just CIFAR-100. Various 
+experiments were conducted with these datasets, and the results were later visualized. 
+Another significant modification was the addition and visualization of the results 
+from an experimental analysis conducted last year with the assistance of the 
+publicly available Framework for Analysis of Class-Incremental Learning (FACIL).
+
 ## Week 16 (06.10 - 06.16)
 
 We have partially modified the code in the `ResNet32` file, now named

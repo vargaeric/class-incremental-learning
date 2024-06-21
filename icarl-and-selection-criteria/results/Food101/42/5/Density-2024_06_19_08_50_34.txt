@@ -1,0 +1,392 @@
+Training iCaRL with the following settings:
+ - Dataset: Food101
+ - Selection criterion: Density
+ - Number of exemplars per target: 20
+ - Number of epochs: 70
+ - Starting learning rate: 2
+ - Learning rate division: 5
+ - Milestones for learning rate adjustment: [49, 63]
+ - Size of the batches: 128
+ - Weight decay: 1e-05
+ - Momentum: 0.9
+ - Number of tasks: 5
+ - Targets order: [87, 0, 52, 58, 44, 91, 68, 97, 51, 15, 94, 92, 10, 72, 49, 78, 61, 14, 8, 86, 84, 96, 18, 24, 32, 45, 88, 11, 4, 67, 69, 66, 77, 47, 79, 93, 29, 50, 57, 83, 17, 81, 41, 12, 37, 59, 25, 20, 80, 73, 1, 28, 6, 46, 62, 82, 53, 9, 31, 75, 38, 63, 33, 74, 27, 22, 36, 3, 16, 21, 60, 19, 70, 90, 89, 43, 5, 42, 65, 76, 40, 30, 23, 85, 2, 95, 56, 48, 71, 64, 98, 13, 99, 7, 34, 55, 54, 26, 35, 39]
+ - Random seed: 42
+
+
+Task 1:
+Current train data length: 15000
+Current test data length: 5000
+Epoch 1: training loss - 6.01812 | validation loss - 1.63625 | accuracy - 0.067
+Epoch 2: training loss - 4.4124 | validation loss - 1.55285 | accuracy - 0.1434
+Epoch 3: training loss - 4.2491 | validation loss - 1.46547 | accuracy - 0.1614
+Epoch 4: training loss - 4.13082 | validation loss - 1.4772 | accuracy - 0.184
+Epoch 5: training loss - 4.02876 | validation loss - 1.5393 | accuracy - 0.1708
+Epoch 6: training loss - 3.91909 | validation loss - 1.4027 | accuracy - 0.233
+Epoch 7: training loss - 3.80537 | validation loss - 1.38586 | accuracy - 0.2424
+Epoch 8: training loss - 3.69274 | validation loss - 1.37224 | accuracy - 0.2408
+Epoch 9: training loss - 3.5659 | validation loss - 1.37348 | accuracy - 0.2546
+Epoch 10: training loss - 3.4853 | validation loss - 1.30153 | accuracy - 0.2924
+Epoch 11: training loss - 3.36187 | validation loss - 1.43597 | accuracy - 0.246
+Epoch 12: training loss - 3.25511 | validation loss - 1.37658 | accuracy - 0.2782
+Epoch 13: training loss - 3.16183 | validation loss - 1.19822 | accuracy - 0.3742
+Epoch 14: training loss - 3.07496 | validation loss - 1.19497 | accuracy - 0.3746
+Epoch 15: training loss - 2.91592 | validation loss - 1.19258 | accuracy - 0.3822
+Epoch 16: training loss - 2.84029 | validation loss - 1.32097 | accuracy - 0.3314
+Epoch 17: training loss - 2.71328 | validation loss - 1.33538 | accuracy - 0.3124
+Epoch 18: training loss - 2.64917 | validation loss - 1.34762 | accuracy - 0.3258
+Epoch 19: training loss - 2.5152 | validation loss - 1.30771 | accuracy - 0.3784
+Epoch 20: training loss - 2.39686 | validation loss - 1.32942 | accuracy - 0.3562
+Epoch 21: training loss - 2.3248 | validation loss - 1.24287 | accuracy - 0.3714
+Epoch 22: training loss - 2.17635 | validation loss - 1.20899 | accuracy - 0.4104
+Epoch 23: training loss - 2.09939 | validation loss - 1.51361 | accuracy - 0.3208
+Epoch 24: training loss - 2.00928 | validation loss - 1.42498 | accuracy - 0.3678
+Epoch 25: training loss - 1.83747 | validation loss - 1.37635 | accuracy - 0.3894
+Epoch 26: training loss - 1.77617 | validation loss - 1.49576 | accuracy - 0.3938
+Epoch 27: training loss - 1.67332 | validation loss - 1.4512 | accuracy - 0.3774
+Epoch 28: training loss - 1.62649 | validation loss - 1.59942 | accuracy - 0.3568
+Epoch 29: training loss - 1.53833 | validation loss - 1.80198 | accuracy - 0.3514
+Epoch 30: training loss - 1.45704 | validation loss - 1.4514 | accuracy - 0.3618
+Epoch 31: training loss - 1.36366 | validation loss - 1.62075 | accuracy - 0.3714
+Epoch 32: training loss - 1.26208 | validation loss - 1.57386 | accuracy - 0.3764
+Epoch 33: training loss - 1.28239 | validation loss - 1.61968 | accuracy - 0.3522
+Epoch 34: training loss - 1.13367 | validation loss - 1.61694 | accuracy - 0.3742
+Epoch 35: training loss - 1.10102 | validation loss - 2.23896 | accuracy - 0.3068
+Epoch 36: training loss - 1.08917 | validation loss - 1.72438 | accuracy - 0.3704
+Epoch 37: training loss - 1.05646 | validation loss - 1.90541 | accuracy - 0.3344
+Epoch 38: training loss - 0.97747 | validation loss - 1.79542 | accuracy - 0.345
+Epoch 39: training loss - 0.93534 | validation loss - 1.77372 | accuracy - 0.3734
+Epoch 40: training loss - 0.88341 | validation loss - 1.86314 | accuracy - 0.3442
+Epoch 41: training loss - 0.83601 | validation loss - 1.55886 | accuracy - 0.3984
+Epoch 42: training loss - 0.84516 | validation loss - 1.91876 | accuracy - 0.3514
+Epoch 43: training loss - 0.74681 | validation loss - 1.8087 | accuracy - 0.379
+Epoch 44: training loss - 0.67462 | validation loss - 2.5971 | accuracy - 0.3262
+Epoch 45: training loss - 0.81306 | validation loss - 1.94364 | accuracy - 0.3528
+Epoch 46: training loss - 0.77946 | validation loss - 2.2951 | accuracy - 0.3124
+Epoch 47: training loss - 0.57351 | validation loss - 1.90821 | accuracy - 0.3714
+Epoch 48: training loss - 0.56437 | validation loss - 2.26707 | accuracy - 0.336
+Epoch 49: training loss - 0.74186 | validation loss - 2.09761 | accuracy - 0.3436
+Epoch 50: training loss - 0.27764 | validation loss - 1.45496 | accuracy - 0.4422
+Epoch 51: training loss - 0.09677 | validation loss - 1.46979 | accuracy - 0.4416
+Epoch 52: training loss - 0.07058 | validation loss - 1.46196 | accuracy - 0.4406
+Epoch 53: training loss - 0.05753 | validation loss - 1.48617 | accuracy - 0.4428
+Epoch 54: training loss - 0.04937 | validation loss - 1.4907 | accuracy - 0.4424
+Epoch 55: training loss - 0.04255 | validation loss - 1.51637 | accuracy - 0.4428
+Epoch 56: training loss - 0.03846 | validation loss - 1.51769 | accuracy - 0.44
+Epoch 57: training loss - 0.04186 | validation loss - 1.54315 | accuracy - 0.4398
+Epoch 58: training loss - 0.04238 | validation loss - 1.56815 | accuracy - 0.4386
+Epoch 59: training loss - 0.03414 | validation loss - 1.55058 | accuracy - 0.4414
+Epoch 60: training loss - 0.03434 | validation loss - 1.54095 | accuracy - 0.4426
+Epoch 61: training loss - 0.03307 | validation loss - 1.57194 | accuracy - 0.44
+Epoch 62: training loss - 0.02742 | validation loss - 1.56483 | accuracy - 0.4386
+Epoch 63: training loss - 0.0259 | validation loss - 1.55938 | accuracy - 0.4402
+Epoch 64: training loss - 0.02517 | validation loss - 1.56076 | accuracy - 0.4414
+Epoch 65: training loss - 0.0254 | validation loss - 1.55808 | accuracy - 0.441
+Epoch 66: training loss - 0.02485 | validation loss - 1.56998 | accuracy - 0.441
+Epoch 67: training loss - 0.02467 | validation loss - 1.57913 | accuracy - 0.4442
+Epoch 68: training loss - 0.02409 | validation loss - 1.59696 | accuracy - 0.4394
+Epoch 69: training loss - 0.02475 | validation loss - 1.5697 | accuracy - 0.4428
+Epoch 70: training loss - 0.02399 | validation loss - 1.57132 | accuracy - 0.442
+Mean-of-exemplars classifier's accuracy: 0.444
+
+Task 2:
+Current train data length: 15400
+Current test data length: 10000
+Epoch 1: training loss - 5.64657 | validation loss - 4.04022 | accuracy - 0.1794
+Epoch 2: training loss - 4.22803 | validation loss - 3.89008 | accuracy - 0.2102
+Epoch 3: training loss - 3.843 | validation loss - 3.83593 | accuracy - 0.2284
+Epoch 4: training loss - 3.53975 | validation loss - 3.90197 | accuracy - 0.226
+Epoch 5: training loss - 3.25911 | validation loss - 4.04044 | accuracy - 0.2147
+Epoch 6: training loss - 3.11989 | validation loss - 4.31645 | accuracy - 0.2023
+Epoch 7: training loss - 2.91638 | validation loss - 4.17415 | accuracy - 0.2269
+Epoch 8: training loss - 2.76822 | validation loss - 4.59624 | accuracy - 0.1992
+Epoch 9: training loss - 2.61749 | validation loss - 4.83398 | accuracy - 0.1794
+Epoch 10: training loss - 2.5889 | validation loss - 4.19965 | accuracy - 0.2208
+Epoch 11: training loss - 2.44111 | validation loss - 4.68601 | accuracy - 0.2123
+Epoch 12: training loss - 2.34222 | validation loss - 4.29168 | accuracy - 0.2166
+Epoch 13: training loss - 2.21574 | validation loss - 4.70232 | accuracy - 0.1841
+Epoch 14: training loss - 2.18809 | validation loss - 5.07641 | accuracy - 0.2018
+Epoch 15: training loss - 2.09221 | validation loss - 4.71508 | accuracy - 0.1957
+Epoch 16: training loss - 1.9749 | validation loss - 4.99171 | accuracy - 0.1951
+Epoch 17: training loss - 1.94677 | validation loss - 4.73446 | accuracy - 0.1969
+Epoch 18: training loss - 1.85483 | validation loss - 5.14258 | accuracy - 0.1944
+Epoch 19: training loss - 1.75384 | validation loss - 4.48063 | accuracy - 0.1972
+Epoch 20: training loss - 1.75393 | validation loss - 5.75592 | accuracy - 0.1668
+Epoch 21: training loss - 1.72502 | validation loss - 4.58974 | accuracy - 0.2078
+Epoch 22: training loss - 1.63128 | validation loss - 4.81687 | accuracy - 0.2015
+Epoch 23: training loss - 1.51977 | validation loss - 5.17378 | accuracy - 0.2045
+Epoch 24: training loss - 1.52387 | validation loss - 5.27127 | accuracy - 0.1987
+Epoch 25: training loss - 1.45512 | validation loss - 5.55914 | accuracy - 0.1868
+Epoch 26: training loss - 1.54989 | validation loss - 5.30696 | accuracy - 0.1886
+Epoch 27: training loss - 1.40024 | validation loss - 4.89216 | accuracy - 0.2184
+Epoch 28: training loss - 1.38041 | validation loss - 4.96417 | accuracy - 0.2019
+Epoch 29: training loss - 1.24527 | validation loss - 5.52876 | accuracy - 0.1908
+Epoch 30: training loss - 1.27807 | validation loss - 5.01462 | accuracy - 0.1988
+Epoch 31: training loss - 1.24356 | validation loss - 5.33889 | accuracy - 0.1999
+Epoch 32: training loss - 1.26513 | validation loss - 4.99906 | accuracy - 0.2089
+Epoch 33: training loss - 1.23139 | validation loss - 5.21136 | accuracy - 0.2034
+Epoch 34: training loss - 1.26616 | validation loss - 6.44364 | accuracy - 0.1839
+Epoch 35: training loss - 1.24277 | validation loss - 4.80086 | accuracy - 0.2237
+Epoch 36: training loss - 1.10689 | validation loss - 5.41827 | accuracy - 0.209
+Epoch 37: training loss - 1.10828 | validation loss - 5.4231 | accuracy - 0.1919
+Epoch 38: training loss - 1.13792 | validation loss - 5.40952 | accuracy - 0.2121
+Epoch 39: training loss - 1.12385 | validation loss - 5.75152 | accuracy - 0.1991
+Epoch 40: training loss - 1.19174 | validation loss - 5.28279 | accuracy - 0.2143
+Epoch 41: training loss - 1.21451 | validation loss - 6.16174 | accuracy - 0.1809
+Epoch 42: training loss - 1.04074 | validation loss - 5.48448 | accuracy - 0.194
+Epoch 43: training loss - 1.06247 | validation loss - 5.38691 | accuracy - 0.2067
+Epoch 44: training loss - 1.09193 | validation loss - 5.95271 | accuracy - 0.1922
+Epoch 45: training loss - 0.96755 | validation loss - 5.53505 | accuracy - 0.2101
+Epoch 46: training loss - 0.96576 | validation loss - 5.70704 | accuracy - 0.1984
+Epoch 47: training loss - 0.99484 | validation loss - 5.56348 | accuracy - 0.1926
+Epoch 48: training loss - 1.26647 | validation loss - 6.07734 | accuracy - 0.1832
+Epoch 49: training loss - 1.17525 | validation loss - 5.18095 | accuracy - 0.2004
+Epoch 50: training loss - 0.72355 | validation loss - 4.50052 | accuracy - 0.2459
+Epoch 51: training loss - 0.55629 | validation loss - 4.52311 | accuracy - 0.2459
+Epoch 52: training loss - 0.51841 | validation loss - 4.57188 | accuracy - 0.2471
+Epoch 53: training loss - 0.49703 | validation loss - 4.55634 | accuracy - 0.2494
+Epoch 54: training loss - 0.48259 | validation loss - 4.53543 | accuracy - 0.2461
+Epoch 55: training loss - 0.46967 | validation loss - 4.59597 | accuracy - 0.2468
+Epoch 56: training loss - 0.45897 | validation loss - 4.6156 | accuracy - 0.2439
+Epoch 57: training loss - 0.45282 | validation loss - 4.59489 | accuracy - 0.2477
+Epoch 58: training loss - 0.44539 | validation loss - 4.61894 | accuracy - 0.2474
+Epoch 59: training loss - 0.4396 | validation loss - 4.63167 | accuracy - 0.2486
+Epoch 60: training loss - 0.43535 | validation loss - 4.65422 | accuracy - 0.2464
+Epoch 61: training loss - 0.43127 | validation loss - 4.6764 | accuracy - 0.2466
+Epoch 62: training loss - 0.42681 | validation loss - 4.65276 | accuracy - 0.2445
+Epoch 63: training loss - 0.42478 | validation loss - 4.71035 | accuracy - 0.2447
+Epoch 64: training loss - 0.41982 | validation loss - 4.68997 | accuracy - 0.2477
+Epoch 65: training loss - 0.42019 | validation loss - 4.69842 | accuracy - 0.2456
+Epoch 66: training loss - 0.41819 | validation loss - 4.69163 | accuracy - 0.2445
+Epoch 67: training loss - 0.41796 | validation loss - 4.69777 | accuracy - 0.2454
+Epoch 68: training loss - 0.41769 | validation loss - 4.69311 | accuracy - 0.2458
+Epoch 69: training loss - 0.41617 | validation loss - 4.69947 | accuracy - 0.2436
+Epoch 70: training loss - 0.41591 | validation loss - 4.69172 | accuracy - 0.2448
+Mean-of-exemplars classifier's accuracy: 0.253
+
+Task 3:
+Current train data length: 15800
+Current test data length: 15000
+Epoch 1: training loss - 5.41789 | validation loss - 7.16133 | accuracy - 0.15413
+Epoch 2: training loss - 4.11767 | validation loss - 7.22926 | accuracy - 0.16627
+Epoch 3: training loss - 3.68569 | validation loss - 7.37877 | accuracy - 0.1498
+Epoch 4: training loss - 3.3337 | validation loss - 7.6922 | accuracy - 0.15613
+Epoch 5: training loss - 3.07633 | validation loss - 7.66648 | accuracy - 0.14233
+Epoch 6: training loss - 2.87396 | validation loss - 7.86269 | accuracy - 0.13567
+Epoch 7: training loss - 2.71853 | validation loss - 8.07133 | accuracy - 0.1314
+Epoch 8: training loss - 2.60863 | validation loss - 7.86706 | accuracy - 0.14147
+Epoch 9: training loss - 2.43752 | validation loss - 9.44418 | accuracy - 0.11007
+Epoch 10: training loss - 2.37738 | validation loss - 7.9902 | accuracy - 0.13427
+Epoch 11: training loss - 2.24951 | validation loss - 8.5774 | accuracy - 0.13827
+Epoch 12: training loss - 2.15892 | validation loss - 8.78464 | accuracy - 0.1268
+Epoch 13: training loss - 2.09415 | validation loss - 8.6368 | accuracy - 0.11947
+Epoch 14: training loss - 1.9329 | validation loss - 8.89464 | accuracy - 0.12753
+Epoch 15: training loss - 1.89 | validation loss - 8.60262 | accuracy - 0.1256
+Epoch 16: training loss - 1.8879 | validation loss - 8.6298 | accuracy - 0.1252
+Epoch 17: training loss - 1.69994 | validation loss - 8.4886 | accuracy - 0.1434
+Epoch 18: training loss - 1.63303 | validation loss - 8.46003 | accuracy - 0.13667
+Epoch 19: training loss - 1.67557 | validation loss - 10.12621 | accuracy - 0.11247
+Epoch 20: training loss - 1.6972 | validation loss - 8.81793 | accuracy - 0.131
+Epoch 21: training loss - 1.57702 | validation loss - 9.08595 | accuracy - 0.1334
+Epoch 22: training loss - 1.48536 | validation loss - 8.91502 | accuracy - 0.1342
+Epoch 23: training loss - 1.40659 | validation loss - 8.76787 | accuracy - 0.13187
+Epoch 24: training loss - 1.39752 | validation loss - 8.36976 | accuracy - 0.14693
+Epoch 25: training loss - 1.46125 | validation loss - 9.79152 | accuracy - 0.1104
+Epoch 26: training loss - 1.49752 | validation loss - 8.55019 | accuracy - 0.13713
+Epoch 27: training loss - 1.41557 | validation loss - 9.32784 | accuracy - 0.13113
+Epoch 28: training loss - 1.3357 | validation loss - 8.73394 | accuracy - 0.13233
+Epoch 29: training loss - 1.25183 | validation loss - 9.156 | accuracy - 0.12987
+Epoch 30: training loss - 1.2436 | validation loss - 9.32936 | accuracy - 0.145
+Epoch 31: training loss - 1.40593 | validation loss - 8.6427 | accuracy - 0.13747
+Epoch 32: training loss - 1.39962 | validation loss - 8.96246 | accuracy - 0.13133
+Epoch 33: training loss - 1.29512 | validation loss - 9.13977 | accuracy - 0.13787
+Epoch 34: training loss - 1.25798 | validation loss - 9.3985 | accuracy - 0.138
+Epoch 35: training loss - 1.2498 | validation loss - 9.4022 | accuracy - 0.132
+Epoch 36: training loss - 1.27818 | validation loss - 10.37053 | accuracy - 0.11093
+Epoch 37: training loss - 1.36371 | validation loss - 9.23058 | accuracy - 0.13633
+Epoch 38: training loss - 1.26309 | validation loss - 8.26369 | accuracy - 0.14773
+Epoch 39: training loss - 1.15813 | validation loss - 8.84645 | accuracy - 0.14667
+Epoch 40: training loss - 1.07468 | validation loss - 8.75781 | accuracy - 0.1464
+Epoch 41: training loss - 1.02096 | validation loss - 9.35012 | accuracy - 0.14207
+Epoch 42: training loss - 1.00948 | validation loss - 8.63669 | accuracy - 0.1504
+Epoch 43: training loss - 1.08908 | validation loss - 9.03331 | accuracy - 0.14767
+Epoch 44: training loss - 1.50716 | validation loss - 8.55694 | accuracy - 0.14707
+Epoch 45: training loss - 1.68013 | validation loss - 9.83166 | accuracy - 0.12493
+Epoch 46: training loss - 1.37851 | validation loss - 9.06612 | accuracy - 0.1288
+Epoch 47: training loss - 1.16608 | validation loss - 8.61787 | accuracy - 0.13733
+Epoch 48: training loss - 0.93644 | validation loss - 8.49422 | accuracy - 0.15353
+Epoch 49: training loss - 0.79277 | validation loss - 8.36668 | accuracy - 0.16007
+Epoch 50: training loss - 0.68994 | validation loss - 7.99089 | accuracy - 0.16493
+Epoch 51: training loss - 0.66353 | validation loss - 8.00437 | accuracy - 0.16693
+Epoch 52: training loss - 0.65304 | validation loss - 8.07588 | accuracy - 0.16493
+Epoch 53: training loss - 0.64582 | validation loss - 8.06124 | accuracy - 0.16667
+Epoch 54: training loss - 0.64093 | validation loss - 8.06934 | accuracy - 0.1652
+Epoch 55: training loss - 0.63599 | validation loss - 8.07508 | accuracy - 0.16447
+Epoch 56: training loss - 0.63155 | validation loss - 8.10317 | accuracy - 0.16353
+Epoch 57: training loss - 0.62732 | validation loss - 8.10243 | accuracy - 0.16327
+Epoch 58: training loss - 0.62542 | validation loss - 8.12344 | accuracy - 0.16393
+Epoch 59: training loss - 0.62218 | validation loss - 8.12462 | accuracy - 0.163
+Epoch 60: training loss - 0.61924 | validation loss - 8.11563 | accuracy - 0.16253
+Epoch 61: training loss - 0.6179 | validation loss - 8.15483 | accuracy - 0.16313
+Epoch 62: training loss - 0.61491 | validation loss - 8.10585 | accuracy - 0.16227
+Epoch 63: training loss - 0.61446 | validation loss - 8.10801 | accuracy - 0.16293
+Epoch 64: training loss - 0.6098 | validation loss - 8.12596 | accuracy - 0.1624
+Epoch 65: training loss - 0.60941 | validation loss - 8.14595 | accuracy - 0.16267
+Epoch 66: training loss - 0.61058 | validation loss - 8.14469 | accuracy - 0.16287
+Epoch 67: training loss - 0.60963 | validation loss - 8.14217 | accuracy - 0.16187
+Epoch 68: training loss - 0.60838 | validation loss - 8.1392 | accuracy - 0.16133
+Epoch 69: training loss - 0.6079 | validation loss - 8.11767 | accuracy - 0.16253
+Epoch 70: training loss - 0.60823 | validation loss - 8.15972 | accuracy - 0.16293
+Mean-of-exemplars classifier's accuracy: 0.18213
+
+Task 4:
+Current train data length: 16200
+Current test data length: 20000
+Epoch 1: training loss - 5.12805 | validation loss - 9.98453 | accuracy - 0.13595
+Epoch 2: training loss - 3.83089 | validation loss - 10.39426 | accuracy - 0.12865
+Epoch 3: training loss - 3.4076 | validation loss - 10.34656 | accuracy - 0.1386
+Epoch 4: training loss - 3.09608 | validation loss - 10.40275 | accuracy - 0.13545
+Epoch 5: training loss - 2.88567 | validation loss - 10.41471 | accuracy - 0.132
+Epoch 6: training loss - 2.75657 | validation loss - 11.13911 | accuracy - 0.13
+Epoch 7: training loss - 2.5995 | validation loss - 11.10907 | accuracy - 0.1242
+Epoch 8: training loss - 2.43924 | validation loss - 11.04311 | accuracy - 0.12415
+Epoch 9: training loss - 2.30514 | validation loss - 11.21398 | accuracy - 0.11695
+Epoch 10: training loss - 2.2451 | validation loss - 11.65772 | accuracy - 0.126
+Epoch 11: training loss - 2.17371 | validation loss - 11.45438 | accuracy - 0.1243
+Epoch 12: training loss - 2.04288 | validation loss - 12.23815 | accuracy - 0.1192
+Epoch 13: training loss - 1.87037 | validation loss - 11.10827 | accuracy - 0.12255
+Epoch 14: training loss - 1.78432 | validation loss - 12.28769 | accuracy - 0.1047
+Epoch 15: training loss - 1.78259 | validation loss - 11.89567 | accuracy - 0.12505
+Epoch 16: training loss - 1.78678 | validation loss - 11.74078 | accuracy - 0.12395
+Epoch 17: training loss - 1.62424 | validation loss - 12.02266 | accuracy - 0.11835
+Epoch 18: training loss - 1.59382 | validation loss - 11.8503 | accuracy - 0.1276
+Epoch 19: training loss - 1.59131 | validation loss - 12.4469 | accuracy - 0.119
+Epoch 20: training loss - 1.57236 | validation loss - 12.87117 | accuracy - 0.11665
+Epoch 21: training loss - 1.50753 | validation loss - 11.89425 | accuracy - 0.1328
+Epoch 22: training loss - 1.41563 | validation loss - 11.66766 | accuracy - 0.12995
+Epoch 23: training loss - 1.46187 | validation loss - 12.64801 | accuracy - 0.11875
+Epoch 24: training loss - 1.51959 | validation loss - 13.85152 | accuracy - 0.11435
+Epoch 25: training loss - 1.48854 | validation loss - 12.89624 | accuracy - 0.1203
+Epoch 26: training loss - 1.40076 | validation loss - 12.55854 | accuracy - 0.1233
+Epoch 27: training loss - 1.27365 | validation loss - 12.52245 | accuracy - 0.12405
+Epoch 28: training loss - 1.28042 | validation loss - 12.72659 | accuracy - 0.1216
+Epoch 29: training loss - 1.38704 | validation loss - 11.8175 | accuracy - 0.12425
+Epoch 30: training loss - 1.45573 | validation loss - 12.27764 | accuracy - 0.1197
+Epoch 31: training loss - 1.39827 | validation loss - 12.33739 | accuracy - 0.1249
+Epoch 32: training loss - 1.36146 | validation loss - 13.14317 | accuracy - 0.1165
+Epoch 33: training loss - 1.29502 | validation loss - 12.26952 | accuracy - 0.12455
+Epoch 34: training loss - 1.23579 | validation loss - 12.48285 | accuracy - 0.12245
+Epoch 35: training loss - 1.14905 | validation loss - 12.00853 | accuracy - 0.1345
+Epoch 36: training loss - 1.07521 | validation loss - 12.11655 | accuracy - 0.13515
+Epoch 37: training loss - 1.04829 | validation loss - 12.88747 | accuracy - 0.1267
+Epoch 38: training loss - 1.16751 | validation loss - 13.35976 | accuracy - 0.10925
+Epoch 39: training loss - 1.48443 | validation loss - 14.32716 | accuracy - 0.1027
+Epoch 40: training loss - 1.78154 | validation loss - 13.31252 | accuracy - 0.11405
+Epoch 41: training loss - 1.53382 | validation loss - 12.25095 | accuracy - 0.12335
+Epoch 42: training loss - 1.25522 | validation loss - 12.28203 | accuracy - 0.1285
+Epoch 43: training loss - 1.04457 | validation loss - 11.91404 | accuracy - 0.13515
+Epoch 44: training loss - 0.93011 | validation loss - 11.33098 | accuracy - 0.1423
+Epoch 45: training loss - 0.86075 | validation loss - 11.57947 | accuracy - 0.14325
+Epoch 46: training loss - 0.79897 | validation loss - 11.42574 | accuracy - 0.1462
+Epoch 47: training loss - 0.76399 | validation loss - 11.31426 | accuracy - 0.1461
+Epoch 48: training loss - 0.74754 | validation loss - 11.28899 | accuracy - 0.14415
+Epoch 49: training loss - 0.74043 | validation loss - 11.25045 | accuracy - 0.1452
+Epoch 50: training loss - 0.72723 | validation loss - 11.34793 | accuracy - 0.14355
+Epoch 51: training loss - 0.72372 | validation loss - 11.34028 | accuracy - 0.1427
+Epoch 52: training loss - 0.72168 | validation loss - 11.37082 | accuracy - 0.14275
+Epoch 53: training loss - 0.72142 | validation loss - 11.31764 | accuracy - 0.1436
+Epoch 54: training loss - 0.72018 | validation loss - 11.32857 | accuracy - 0.14315
+Epoch 55: training loss - 0.71917 | validation loss - 11.33083 | accuracy - 0.14295
+Epoch 56: training loss - 0.71882 | validation loss - 11.30748 | accuracy - 0.14235
+Epoch 57: training loss - 0.71852 | validation loss - 11.33882 | accuracy - 0.14255
+Epoch 58: training loss - 0.71761 | validation loss - 11.32887 | accuracy - 0.14335
+Epoch 59: training loss - 0.71704 | validation loss - 11.30064 | accuracy - 0.1417
+Epoch 60: training loss - 0.71621 | validation loss - 11.32649 | accuracy - 0.1423
+Epoch 61: training loss - 0.71633 | validation loss - 11.31653 | accuracy - 0.14205
+Epoch 62: training loss - 0.71483 | validation loss - 11.29551 | accuracy - 0.1423
+Epoch 63: training loss - 0.71379 | validation loss - 11.28346 | accuracy - 0.14205
+Epoch 64: training loss - 0.71275 | validation loss - 11.29303 | accuracy - 0.142
+Epoch 65: training loss - 0.71244 | validation loss - 11.3093 | accuracy - 0.1422
+Epoch 66: training loss - 0.71235 | validation loss - 11.32163 | accuracy - 0.14155
+Epoch 67: training loss - 0.71266 | validation loss - 11.27208 | accuracy - 0.14275
+Epoch 68: training loss - 0.71268 | validation loss - 11.30566 | accuracy - 0.14135
+Epoch 69: training loss - 0.71191 | validation loss - 11.29188 | accuracy - 0.14195
+Epoch 70: training loss - 0.7117 | validation loss - 11.29815 | accuracy - 0.14215
+Mean-of-exemplars classifier's accuracy: 0.1678
+
+Task 5:
+Current train data length: 16600
+Current test data length: 25000
+Epoch 1: training loss - 5.5006 | validation loss - 13.76772 | accuracy - 0.09348
+Epoch 2: training loss - 4.2609 | validation loss - 13.8787 | accuracy - 0.10084
+Epoch 3: training loss - 3.84095 | validation loss - 14.11485 | accuracy - 0.10204
+Epoch 4: training loss - 3.5576 | validation loss - 14.0829 | accuracy - 0.09716
+Epoch 5: training loss - 3.32703 | validation loss - 13.84721 | accuracy - 0.0912
+Epoch 6: training loss - 3.14863 | validation loss - 15.00809 | accuracy - 0.09196
+Epoch 7: training loss - 2.96764 | validation loss - 13.96259 | accuracy - 0.09536
+Epoch 8: training loss - 2.78604 | validation loss - 15.22913 | accuracy - 0.09368
+Epoch 9: training loss - 2.66286 | validation loss - 14.08602 | accuracy - 0.10524
+Epoch 10: training loss - 2.52965 | validation loss - 14.51119 | accuracy - 0.09488
+Epoch 11: training loss - 2.43005 | validation loss - 14.25585 | accuracy - 0.09252
+Epoch 12: training loss - 2.2263 | validation loss - 15.64836 | accuracy - 0.08888
+Epoch 13: training loss - 2.2363 | validation loss - 15.44081 | accuracy - 0.09192
+Epoch 14: training loss - 2.10401 | validation loss - 15.32257 | accuracy - 0.10032
+Epoch 15: training loss - 2.01555 | validation loss - 14.69804 | accuracy - 0.10196
+Epoch 16: training loss - 1.94539 | validation loss - 15.34263 | accuracy - 0.10464
+Epoch 17: training loss - 1.85207 | validation loss - 14.21818 | accuracy - 0.10872
+Epoch 18: training loss - 1.77561 | validation loss - 16.00328 | accuracy - 0.0926
+Epoch 19: training loss - 1.65333 | validation loss - 16.3185 | accuracy - 0.08292
+Epoch 20: training loss - 1.75399 | validation loss - 15.2024 | accuracy - 0.1078
+Epoch 21: training loss - 1.73068 | validation loss - 15.43047 | accuracy - 0.09764
+Epoch 22: training loss - 1.64741 | validation loss - 15.6229 | accuracy - 0.09972
+Epoch 23: training loss - 1.66287 | validation loss - 17.17136 | accuracy - 0.0788
+Epoch 24: training loss - 1.63204 | validation loss - 16.03226 | accuracy - 0.0926
+Epoch 25: training loss - 1.56204 | validation loss - 15.85218 | accuracy - 0.09088
+Epoch 26: training loss - 1.50589 | validation loss - 15.84422 | accuracy - 0.10596
+Epoch 27: training loss - 1.50437 | validation loss - 15.02578 | accuracy - 0.10556
+Epoch 28: training loss - 1.56972 | validation loss - 15.61889 | accuracy - 0.10068
+Epoch 29: training loss - 1.50439 | validation loss - 16.03524 | accuracy - 0.09636
+Epoch 30: training loss - 1.49867 | validation loss - 14.93271 | accuracy - 0.10824
+Epoch 31: training loss - 1.54805 | validation loss - 16.67855 | accuracy - 0.09884
+Epoch 32: training loss - 1.4988 | validation loss - 15.76931 | accuracy - 0.10568
+Epoch 33: training loss - 1.50029 | validation loss - 16.61253 | accuracy - 0.09284
+Epoch 34: training loss - 1.50818 | validation loss - 15.60107 | accuracy - 0.09912
+Epoch 35: training loss - 1.47839 | validation loss - 16.86904 | accuracy - 0.08928
+Epoch 36: training loss - 1.50958 | validation loss - 15.824 | accuracy - 0.10256
+Epoch 37: training loss - 1.4301 | validation loss - 16.66666 | accuracy - 0.09784
+Epoch 38: training loss - 1.35811 | validation loss - 16.64567 | accuracy - 0.09756
+Epoch 39: training loss - 1.28395 | validation loss - 15.98953 | accuracy - 0.10012
+Epoch 40: training loss - 1.24568 | validation loss - 15.95651 | accuracy - 0.10772
+Epoch 41: training loss - 1.22442 | validation loss - 16.04387 | accuracy - 0.103
+Epoch 42: training loss - 1.28303 | validation loss - 18.24125 | accuracy - 0.0848
+Epoch 43: training loss - 1.57709 | validation loss - 19.9971 | accuracy - 0.07084
+Epoch 44: training loss - 1.94256 | validation loss - 15.61591 | accuracy - 0.10336
+Epoch 45: training loss - 1.80666 | validation loss - 15.61191 | accuracy - 0.09856
+Epoch 46: training loss - 1.46832 | validation loss - 15.93126 | accuracy - 0.09584
+Epoch 47: training loss - 1.22444 | validation loss - 15.14545 | accuracy - 0.11244
+Epoch 48: training loss - 1.06223 | validation loss - 15.02356 | accuracy - 0.11072
+Epoch 49: training loss - 0.97482 | validation loss - 14.564 | accuracy - 0.11676
+Epoch 50: training loss - 0.92009 | validation loss - 14.35901 | accuracy - 0.11972
+Epoch 51: training loss - 0.90762 | validation loss - 14.36301 | accuracy - 0.12072
+Epoch 52: training loss - 0.90268 | validation loss - 14.40313 | accuracy - 0.1198
+Epoch 53: training loss - 0.89742 | validation loss - 14.42765 | accuracy - 0.12048
+Epoch 54: training loss - 0.8951 | validation loss - 14.47763 | accuracy - 0.1186
+Epoch 55: training loss - 0.89186 | validation loss - 14.42672 | accuracy - 0.11948
+Epoch 56: training loss - 0.89019 | validation loss - 14.43666 | accuracy - 0.11888
+Epoch 57: training loss - 0.88791 | validation loss - 14.46151 | accuracy - 0.1188
+Epoch 58: training loss - 0.88543 | validation loss - 14.44892 | accuracy - 0.11936
+Epoch 59: training loss - 0.88407 | validation loss - 14.46678 | accuracy - 0.11776
+Epoch 60: training loss - 0.88148 | validation loss - 14.44596 | accuracy - 0.11844
+Epoch 61: training loss - 0.88053 | validation loss - 14.48782 | accuracy - 0.11796
+Epoch 62: training loss - 0.87899 | validation loss - 14.52177 | accuracy - 0.11792
+Epoch 63: training loss - 0.87764 | validation loss - 14.47434 | accuracy - 0.1174
+Epoch 64: training loss - 0.87556 | validation loss - 14.5167 | accuracy - 0.11748
+Epoch 65: training loss - 0.87528 | validation loss - 14.49603 | accuracy - 0.11848
+Epoch 66: training loss - 0.87526 | validation loss - 14.49499 | accuracy - 0.11772
+Epoch 67: training loss - 0.87456 | validation loss - 14.48956 | accuracy - 0.11816
+Epoch 68: training loss - 0.87403 | validation loss - 14.51425 | accuracy - 0.11644
+Epoch 69: training loss - 0.87406 | validation loss - 14.4852 | accuracy - 0.11684
+Epoch 70: training loss - 0.87428 | validation loss - 14.51323 | accuracy - 0.11724
+Mean-of-exemplars classifier's accuracy: 0.14836
+
+Accuracy scores: [0.444, 0.253, 0.18213, 0.1678, 0.14836]
