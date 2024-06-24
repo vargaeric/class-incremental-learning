@@ -1,4 +1,4 @@
-from torch import no_grad, float, mean, tensor, float
+from torch import no_grad, float, mean, tensor
 from torch.nn.functional import one_hot
 
 

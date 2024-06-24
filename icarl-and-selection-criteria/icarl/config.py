@@ -16,3 +16,4 @@ targets_order = [
 ]
 # targets_order = [0, 8, 4, 1, 6, 9, 3, 5, 2, 7]
 seed = 42
+visualize_exemplar_selection = False

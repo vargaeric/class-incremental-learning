@@ -1,5 +1,12 @@
 # Master Thesis Progress Tracking
 
+## Week 18 (06.24 - 06.30)
+
+This week (or more precisely today), we refactored how the density selection 
+criterion was implemented, which required us to rerun the experiments. Additionally,
+we have implemented a visualization for all exemplar selections. Lastly, we made 
+small refactorings to the folder and file structures of the repository.
+
 ## Week 17 (06.17 - 06.23)
 
 We have made several modifications this week: adjusted the code to handle various 

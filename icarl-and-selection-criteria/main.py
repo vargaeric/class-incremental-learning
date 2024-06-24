@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from os import makedirs, path
+from os import path, makedirs
 from functools import partial
 from constants import (
     ICARL_APPROACH, MNIST_DATASET, FMNIST_DATASET, CIFAR100_DATASET, FOOD101_DATASET, ORIGINAL_SELECTION,
@@ -17,7 +17,8 @@ from utils.group_data_by_tasks import group_data_by_tasks
 
 def main(approach, dataset, selection):
     results_folder_name = 'results'
-    file_path = f'{results_folder_name}/{dataset}/{seed}/{tasks_nr}/{selection}-{get_current_date_and_time()}.txt'
+    file_name = f'{selection}-{get_current_date_and_time()}.txt'
+    file_path = path.join(results_folder_name, dataset, str(seed), str(tasks_nr), file_name)
 
     makedirs(path.dirname(file_path), exist_ok=True)
 
@@ -48,7 +49,7 @@ def main(approach, dataset, selection):
     file.close()
 
 
-# To start the code run "python3.8 ./main.py --approach=iCaRL --dataset=CIFAR100 --selection=Original" in the terminal!
+# To start the code run "python3.8 ./main.py --approach=iCaRL --dataset=CIFAR100 --selection=Original" in the terminal.
 if __name__ == "__main__":
     parser = ArgumentParser(
         description="Do class-incremental learning with the specified approach, dataset and selection criterion."

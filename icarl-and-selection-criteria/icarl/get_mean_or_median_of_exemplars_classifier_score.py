@@ -1,10 +1,10 @@
-from torch import zeros, no_grad, norm, cdist, nn, argmax, mean, tensor, float
+from torch import zeros, no_grad, cdist, argmax, mean, tensor, float
 from torch.nn.functional import normalize
 from .inference import inference
 
 
 def get_mean_or_median_of_exemplars_classifier_score(model, device, test_data_loader, target_means_or_medians,
-                                                     targets_nr, extracted_features_nr = 64):
+                                                     targets_nr, extracted_features_nr=64):
     target_mean_or_median_tensors = zeros(extracted_features_nr, targets_nr).to(device)
 
     for target, target_mean_or_median in target_means_or_medians.items():
