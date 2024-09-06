@@ -1,5 +1,12 @@
 # Master Thesis Progress Tracking
 
+## Week 19 (09.02 - 09.08)
+
+We have modified the code to measure the execution time of each task (including the 
+exemplar selection part separately). In the end, we output the overall execution time 
+of the executed algorithm. Furthermore, we have rerun all the experiments and redone 
+the graphical representation for the results in the notebooks.
+
 ## Week 18 (06.24 - 06.30)
 
 This week (or more precisely today), we refactored how the density selection 

@@ -1,3 +1,4 @@
+from time import time
 from torch.optim import SGD, lr_scheduler
 from torch.utils.data import DataLoader
 from constants import K_MEANS_SELECTION, MEDIAN_SELECTION
@@ -43,6 +44,8 @@ def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_
 
     group_training_data_by_targets(train_data_grouped_by_targets, current_train_data)
 
+    exemplars_selection_start_time = time()
+
     if selection_method == K_MEANS_SELECTION:
         new_exemplars = select_exemplars_with_k_means(model, device, train_data_grouped_by_targets,
                                                       target_means_or_medians)
@@ -50,6 +53,9 @@ def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_
         new_exemplars = select_exemplars_by_mean_or_median_or_density(model, device, task_nr,
                                                                       train_data_grouped_by_targets,
                                                                       target_means_or_medians, selection_method)
+
+    exemplars_selection_end_time = time()
+    exemplars_selection_execution_time = exemplars_selection_end_time - exemplars_selection_start_time
 
     mean_or_median_of_exemplars_classifier_score = get_mean_or_median_of_exemplars_classifier_score(
         model, device, test_data_loader, target_means_or_medians, targets_nr
@@ -59,6 +65,7 @@ def train_one_incremental_learning_step(model, old_model, device, loss_fn, task_
 
     log(f"{classifier_type}-of-exemplars classifier's accuracy: {mean_or_median_of_exemplars_classifier_score_rounded}")
     accuracy_scores.append(mean_or_median_of_exemplars_classifier_score_rounded)
+    log(f"Exemplars selection execution time: {exemplars_selection_execution_time:.4f}s")
 
     if selection_method == K_MEANS_SELECTION:
         exemplars = new_exemplars
